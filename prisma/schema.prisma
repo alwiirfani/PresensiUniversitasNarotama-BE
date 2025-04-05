@@ -1,0 +1,257 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enum untuk Status Presensi
+enum StatusPresensi {
+  HADIR
+  IZIN
+  ALPHA
+}
+
+// Enum untuk Status Scan QR
+enum ScanStatus {
+  SUCCESS
+  FAILED_EXPIRED
+  FAILED_INVALID
+  FAILED_OTHER
+}
+
+// Entitas Admin
+model Admin {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  password     String
+  refreshToken String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Entitas Fakultas
+model Fakultas {
+  id        String   @id @default(uuid()) @db.VarChar(255)
+  nama      String   @db.VarChar(255)
+  dekan     String?  @db.VarChar(255)
+  prodi     Prodi[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([nama])
+}
+
+// Entitas Program Studi
+model Prodi {
+  id         String       @id @default(uuid())
+  nama       String
+  kode       String       @unique
+  fakultasId String
+  fakultas   Fakultas     @relation(fields: [fakultasId], references: [id])
+  mahasiswa  Mahasiswa[]
+  dosen      Dosen[]
+  mataKuliah MataKuliah[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  @@index([nama, kode])
+}
+
+// Entitas Mahasiswa
+model Mahasiswa {
+  nim                 String                @id @default(uuid()) @db.Char(7)
+  nama                String                @db.VarChar(255)
+  email               String                @db.VarChar(50)
+  password            String                @db.VarChar(255)
+  alamat              String                @db.VarChar(255)
+  prodiId             String
+  prodi               Prodi                 @relation(fields: [prodiId], references: [id])
+  dosenMahasiswa      DosenMahasiswa[]
+  mahasiswaMataKuliah MahasiswaMataKuliah[]
+  mahasiswaJadwal     MahasiswaJadwal[]
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  Presensi            Presensi[]
+  MahasiswaQRCode     MahasiswaQRCode[]
+
+  @@unique([prodiId])
+  @@index([nim, email])
+}
+
+// Entitas Dosen
+model Dosen {
+  nip              String             @id @default(uuid()) @db.Char(7)
+  nama             String             @db.VarChar(255)
+  email            String             @unique
+  password         String             @db.VarChar(255)
+  alamat           String             @db.VarChar(255)
+  prodiId          String             @db.VarChar(255)
+  prodi            Prodi              @relation(fields: [prodiId], references: [id])
+  dosenMahasiswa   DosenMahasiswa[]
+  dosenMatakuliah  DosenMataKuliah[]
+  jadwalMataKuliah JadwalMataKuliah[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  verifiedPresensi Presensi[]         @relation("VerifiedPresensi")
+  ScanLog          ScanLog[]
+
+  @@unique([prodiId])
+  @@index([nip, email])
+}
+
+// Entitas Mata Kuliah
+model MataKuliah {
+  kode                String                @id @db.Char(5)
+  nama                String                @db.VarChar(255)
+  sks                 Int
+  prodiId             String                @db.VarChar(255)
+  prodi               Prodi                 @relation(fields: [prodiId], references: [id])
+  dosenMataKuliah     DosenMataKuliah[]
+  mahasiswaMataKuliah MahasiswaMataKuliah[]
+  jadwalMataKuliah    JadwalMataKuliah[]
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+
+  @@index([kode, nama])
+}
+
+// Entitas Presensi
+model Presensi {
+  id                 String           @id @default(uuid()) @db.VarChar(255)
+  mahasiswaNim       String           @db.Char(7)
+  jadwalMataKuliahId String           @db.VarChar(255)
+  tanggal            DateTime
+  scanTime           DateTime         @default(now())
+  status             StatusPresensi
+  qrTokenUsed        String
+  mahasiswa          Mahasiswa        @relation(fields: [mahasiswaNim], references: [nim])
+  jadwalMataKuliah   JadwalMataKuliah @relation(fields: [jadwalMataKuliahId], references: [id])
+  createdAt          DateTime         @default(now())
+  verifiedByDosenNip String?
+  verifiedByDosen    Dosen?           @relation(fields: [verifiedByDosenNip], references: [nip], name: "VerifiedPresensi")
+
+  @@unique([mahasiswaNim, jadwalMataKuliahId, tanggal])
+  @@index([mahasiswaNim, jadwalMataKuliahId])
+}
+
+// Entitas Jadwal Mata Kuliah
+model JadwalMataKuliah {
+  id              String            @id @default(uuid()) @db.VarChar(255)
+  hari            String            @db.VarChar(10)
+  jamMulai        String            @db.VarChar(50)
+  jamSelesai      String            @db.VarChar(50)
+  ruangan         String            @db.VarChar(10)
+  mataKuliahKode  String            @db.Char(5)
+  mataKuliah      MataKuliah        @relation(fields: [mataKuliahKode], references: [kode])
+  dosenNip        String            @db.Char(7)
+  dosen           Dosen             @relation(fields: [dosenNip], references: [nip])
+  mahasiswaJadwal MahasiswaJadwal[]
+  presensi        Presensi[]
+  qrCodeToken     String?           @default(uuid()) @db.VarChar(255)
+  qrCodeExpiredAt DateTime?
+  qrCodeUrl       String?           @db.VarChar(255)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  ScanLog         ScanLog[]
+  MahasiswaQRCode MahasiswaQRCode[]
+
+  @@unique([mataKuliahKode, hari, jamMulai, ruangan])
+  @@index([mataKuliahKode, dosenNip, hari])
+}
+
+// Entitas Perantara antara Mahasiswa dan Jadwal
+model MahasiswaJadwal {
+  id                 String           @id @default(uuid()) @db.VarChar(255)
+  mahasiswaNim       String           @db.Char(7)
+  mahasiswa          Mahasiswa        @relation(fields: [mahasiswaNim], references: [nim])
+  jadwalMataKuliahId String           @db.VarChar(255)
+  jadwalMataKuliah   JadwalMataKuliah @relation(fields: [jadwalMataKuliahId], references: [id])
+  createdAt          DateTime         @default(now())
+
+  @@unique([mahasiswaNim, jadwalMataKuliahId])
+  @@index([mahasiswaNim, jadwalMataKuliahId])
+}
+
+// Entitas Perantara antara Dosen dan Mahasiswa
+model DosenMahasiswa {
+  id           String    @id @default(uuid()) @db.VarChar(255)
+  dosenNip     String    @db.Char(7)
+  mahasiswaNim String    @db.Char(7)
+  dosen        Dosen     @relation(fields: [dosenNip], references: [nip])
+  mahasiswa    Mahasiswa @relation(fields: [mahasiswaNim], references: [nim])
+  createdAt    DateTime  @default(now())
+
+  @@unique([dosenNip, mahasiswaNim])
+  @@index([dosenNip, mahasiswaNim])
+}
+
+// Entitas perantara antara Mahasiswa dan Mata Kuliah
+model MahasiswaMataKuliah {
+  id             String     @id @default(uuid()) @db.VarChar(255)
+  mahasiswaNim   String     @db.Char(7)
+  mataKuliahKode String     @db.Char(5)
+  mahasiswa      Mahasiswa  @relation(fields: [mahasiswaNim], references: [nim])
+  mataKuliah     MataKuliah @relation(fields: [mataKuliahKode], references: [kode])
+  semester       Int?
+  createdAt      DateTime   @default(now())
+
+  @@unique([mahasiswaNim, mataKuliahKode])
+  @@index([mahasiswaNim, mataKuliahKode])
+}
+
+// Entitas perantara antara Dosen dan Mata Kuliah
+model DosenMataKuliah {
+  id             String     @id @default(uuid()) @db.VarChar(255)
+  dosenNip       String     @db.Char(7)
+  mataKuliahKode String     @db.Char(5)
+  dosen          Dosen      @relation(fields: [dosenNip], references: [nip])
+  mataKuliah     MataKuliah @relation(fields: [mataKuliahKode], references: [kode])
+  tahunAjaran    String?    @db.VarChar(255)
+  semester       Int?
+  createdAt      DateTime   @default(now())
+
+  @@unique([dosenNip, mataKuliahKode])
+  @@index([dosenNip, mataKuliahKode])
+}
+
+// Entitas untuk Log Scan Gagal (Baru)
+model ScanLog {
+  id                 String            @id @default(uuid())
+  mahasiswaNim       String?           @db.Char(7)
+  jadwalMataKuliahId String?
+  jadwalMataKuliah   JadwalMataKuliah? @relation(fields: [jadwalMataKuliahId], references: [id])
+  scannedByDosenNip  String?
+  scannedByDosen     Dosen?            @relation(fields: [scannedByDosenNip], references: [nip])
+  qrToken            String            @db.VarChar(255)
+  scanTime           DateTime          @default(now())
+  status             ScanStatus
+  errorMessage       String?           @db.VarChar(255)
+
+  @@unique([jadwalMataKuliahId])
+  @@index([mahasiswaNim, jadwalMataKuliahId, scanTime])
+}
+
+// Entitas untuk QR Code yang dibuat mahasiswa
+model MahasiswaQRCode {
+  id                 String           @id @default(uuid())
+  mahasiswaNim       String
+  mahasiswa          Mahasiswa        @relation(fields: [mahasiswaNim], references: [nim])
+  jadwalMataKuliahId String
+  jadwalMataKuliah   JadwalMataKuliah @relation(fields: [jadwalMataKuliahId], references: [id])
+  qrToken            String
+  createdAt          DateTime         @default(now())
+  expiredAt          DateTime
+  isUsed             Boolean          @default(false)
+  usedAt             DateTime?
+
+  @@index([mahasiswaNim, jadwalMataKuliahId, createdAt])
+}
