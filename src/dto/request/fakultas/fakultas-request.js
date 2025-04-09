@@ -5,4 +5,10 @@ const createFakultasSchemaRequest = Joi.object({
   dekan: Joi.string().min(3).max(50).optional(),
 });
 
-export { createFakultasSchemaRequest };
+const updateFakultasSchemaRequest = Joi.object({
+  id: Joi.string().min(3).required(),
+  name: Joi.string().min(3).max(50).required(),
+  dekan: Joi.string().min(3).max(50).optional(),
+});
+
+export { createFakultasSchemaRequest, updateFakultasSchemaRequest };
