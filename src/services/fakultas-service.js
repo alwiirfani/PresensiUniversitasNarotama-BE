@@ -2,6 +2,11 @@ import {
   createFakultasSchemaRequest,
   updateFakultasSchemaRequest,
 } from "../dto/request/fakultas/fakultas-request.js";
+import {
+  createFakultasResponse,
+  findFakultasByIdResponse,
+  updateFakultasResponse,
+} from "../dto/response/fakultas/fakultas-response.js";
 import prisma from "../configs/db/prisma.js";
 import { validate } from "../utils/validation-util.js";
 import ResponseError from "../errors/response-error.js";
@@ -28,12 +33,7 @@ const createFakultas = async (request) => {
       },
     });
 
-    return {
-      id: createFakultas.id,
-      nama: createFakultas.nama,
-      dekan: createFakultas.dekan,
-      createdAt: createFakultas.createdAt,
-    };
+    return createFakultasResponse(createFakultas);
   } catch (error) {
     throw new ResponseError(error.status, error.message);
   }
@@ -51,28 +51,18 @@ const updateFakultas = async (request) => {
 
   if (!fakultas) throw new ResponseError(404, "Fakultas not found");
 
-  fakultas.nama = updateFakultasRequest.name;
-  fakultas.dekan = updateFakultasRequest.dekan;
-  fakultas.updatedAt = new Date();
-
-  await prisma.fakultas.update({
+  const fakultasUpdated = await prisma.fakultas.update({
     where: {
       id: updateFakultasRequest.id,
     },
     data: {
-      nama: fakultas.nama,
-      dekan: fakultas.dekan,
-      updatedAt: fakultas.updatedAt,
+      nama: updateFakultasRequest.name,
+      dekan: updateFakultasRequest.dekan,
+      updatedAt: new Date(),
     },
   });
 
-  return {
-    id: fakultas.id,
-    nama: fakultas.nama,
-    dekan: fakultas.dekan,
-    createdAt: fakultas.createdAt,
-    updatedAt: fakultas.updatedAt,
-  };
+  return updateFakultasResponse(fakultasUpdated);
 };
 
 // find fakultas by id
@@ -88,13 +78,17 @@ const findFakultasById = async (fakultasId) => {
 
     if (!fakultas) throw new ResponseError(404, "Fakultas not found");
 
-    return {
-      id: fakultas.id,
-      nama: fakultas.nama,
-      dekan: fakultas.dekan,
-      createdAt: fakultas.createdAt,
-      updatedAt: fakultas.updatedAt,
-    };
+    return findFakultasByIdResponse(fakultas);
+  } catch (error) {
+    throw new ResponseError(error.status, error.message);
+  }
+};
+
+// find all fakultas
+const findAllFakultas = async () => {
+  try {
+    const fakultases = await prisma.fakultas.findMany();
+    return fakultases;
   } catch (error) {
     throw new ResponseError(error.status, error.message);
   }
@@ -130,5 +124,6 @@ export default {
   createFakultas,
   updateFakultas,
   findFakultasById,
+  findAllFakultas,
   deleteFakultas,
 };

@@ -35,8 +35,22 @@ const findFakultasById = async (req, res, next) => {
 
     res.status(200).json({
       status: 200,
-      message: "Fakultas found successfully",
+      message: "FInd Fakultas by Id successfully",
       data: fakultas,
+    });
+  } catch (error) {
+    const status = error.status || 500;
+    next(res.status(status).json({ status: status, message: error.message }));
+  }
+};
+
+const findAllFakultas = async (req, res, next) => {
+  try {
+    const fakultases = await fakultasService.findAllFakultas();
+    res.status(200).json({
+      status: 200,
+      message: "Find All Fakultas successfully",
+      data: fakultases,
     });
   } catch (error) {
     const status = error.status || 500;
@@ -50,7 +64,7 @@ const deleteFakultas = async (req, res, next) => {
     const response = await fakultasService.deleteFakultas(id);
     res.status(200).json({
       status: 200,
-      message: `Fakultas with name = ${response.name} deleted successfully`,
+      message: `Fakultas ${response.name} deleted successfully`,
     });
   } catch (error) {
     const status = error.status || 500;
@@ -62,5 +76,6 @@ export default {
   createFakultas,
   updateFakultas,
   findFakultasById,
+  findAllFakultas,
   deleteFakultas,
 };
