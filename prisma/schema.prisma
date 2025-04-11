@@ -53,9 +53,9 @@ model Fakultas {
 // Entitas Program Studi
 model Prodi {
   id         String       @id @default(uuid())
-  nama       String
-  kode       String       @unique
-  fakultasId String
+  nama       String //@db.VarChar(255)
+  kode       String       @unique //@db.Char(3)
+  fakultasId String //@db.VarChar(255)
   fakultas   Fakultas     @relation(fields: [fakultasId], references: [id])
   mahasiswa  Mahasiswa[]
   dosen      Dosen[]

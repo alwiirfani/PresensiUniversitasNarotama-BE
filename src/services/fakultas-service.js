@@ -100,6 +100,29 @@ const findFakultasById = async (fakultasId) => {
   }
 };
 
+// find fakultas by name
+const findFakultasByName = async (fakultasName) => {
+  // validasi fakultas name
+  if (!fakultasName || typeof fakultasName !== "string")
+    throw new ResponseError(400, "Fakultas name is not valid");
+
+  try {
+    // cek apakah fakultas sudah ada
+    const fakultas = await prisma.fakultas.findFirst({
+      where: {
+        nama: fakultasName,
+      },
+    });
+
+    // throw error jika fakultas tidak ada
+    if (!fakultas) throw new ResponseError(404, "Fakultas not found");
+
+    return fakultas;
+  } catch (error) {
+    throw new ResponseError(error.status, error.message);
+  }
+};
+
 // find all fakultas
 const findAllFakultas = async ({ nama, dekan, page = 1, pageSize = 10 }) => {
   // validasi page dan page size
@@ -132,7 +155,7 @@ const findAllFakultas = async ({ nama, dekan, page = 1, pageSize = 10 }) => {
     return {
       data: fakultasList,
       pagination: {
-        currentPage: page,
+        page: page,
         pageSize: pageSize,
         totalItems: totalItems,
         totalPages: totalPages,
@@ -182,6 +205,7 @@ export default {
   createFakultas,
   updateFakultas,
   findFakultasById,
+  findFakultasByName,
   findAllFakultas,
   deleteFakultas,
 };
