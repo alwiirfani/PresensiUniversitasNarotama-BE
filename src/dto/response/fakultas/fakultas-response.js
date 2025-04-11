@@ -24,6 +24,7 @@ const findFakultasByIdResponse = (findFakultas) => {
     dekan: findFakultas.dekan,
     createdAt: findFakultas.createdAt,
     updatedAt: findFakultas.updatedAt,
+    prodi: findFakultas.prodi,
   };
 };
 

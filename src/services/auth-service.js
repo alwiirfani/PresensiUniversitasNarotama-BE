@@ -1,11 +1,11 @@
-import "dotenv/config";
-import prisma from "../configs/db/prisma.js";
-import jwt from "jsonwebtoken";
-import validate from "../utils/validation-util.js";
 import {
   loginMahasiswaSchemaRequest,
   registerMahasiswaSchemaRequest,
 } from "../dto/request/authentication/auth-request.js";
+import "dotenv/config";
+import prisma from "../configs/db/prisma.js";
+import jwt from "jsonwebtoken";
+import validate from "../utils/validation-util.js";
 import ResponseError from "../errors/response.error.js";
 
 // register mahasiswa

@@ -5,5 +5,6 @@ const publicRoute = express.Router();
 
 // FAKULTAS
 publicRoute.get("/api/v1/fakultas/:id", fakultasController.findFakultasById);
+publicRoute.get("/api/v1/fakultas", fakultasController.findAllFakultas);
 
 export { publicRoute };
