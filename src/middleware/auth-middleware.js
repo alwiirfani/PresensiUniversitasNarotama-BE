@@ -62,7 +62,7 @@ const verifyTokenDosen = (req, res, next) => {
 
     console.log(decode);
 
-    // verify role throw error if role is not mahasiswa
+    // verify role throw error if role is not dosen
     if (decode.role !== "dosen")
       return res.status(401).json({
         status: 401,
@@ -90,7 +90,7 @@ const verifyTokenAdmin = (req, res, next) => {
 
     console.log(decode);
 
-    // verify role throw error if role is not mahasiswa
+    // verify role throw error if role is not admin
     if (decode.role !== "admin")
       return res.status(401).json({
         status: 401,

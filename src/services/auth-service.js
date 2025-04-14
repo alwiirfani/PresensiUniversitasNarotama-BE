@@ -7,7 +7,7 @@ import {
 import {
   registerAdminResponse,
   registerMahasiswaResponse,
-} from "../dto/response/authentication/authentication-response.js";
+} from "../dto/response/authentication/auth-response.js";
 import "dotenv/config";
 import prisma from "../configs/db/prisma.js";
 import jwt from "jsonwebtoken";
@@ -15,6 +15,7 @@ import { validate } from "../utils/validation-util.js";
 import ResponseError from "../errors/response-error.js";
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
+import prodiService from "./prodi-service.js";
 
 // resgister admin
 const registerAdmin = async (request) => {
@@ -69,11 +70,6 @@ const loginAdmin = async (request) => {
       where: {
         username: loginAdminRequest.username,
       },
-      select: {
-        id: true,
-        username: true,
-        password: true,
-      },
     });
 
     // cek apakah admin sudah terdaftar throw error
@@ -126,6 +122,11 @@ const registerMahasiswa = async (request) => {
   );
 
   try {
+    // cek prodi apakah ada
+    const prodi = await prodiService.findProdiByName(
+      registerMahasiswaRequest.namaProdi
+    );
+
     // cek password dan confirm password
     if (
       registerMahasiswaRequest.password !==
@@ -140,6 +141,7 @@ const registerMahasiswa = async (request) => {
     const mahasiswaExist = await prisma.mahasiswa.findUnique({
       where: {
         nim: registerMahasiswaRequest.nim,
+        prodiId: prodi.id,
       },
     });
 
@@ -157,10 +159,14 @@ const registerMahasiswa = async (request) => {
       data: {
         nim: registerMahasiswaRequest.nim,
         nama: registerMahasiswaRequest.nama,
+        prodiId: prodi.id,
         email: registerMahasiswaRequest.email,
         password: hashedPassword,
         alamat: registerMahasiswaRequest.alamat,
         createdAt: new Date(),
+      },
+      include: {
+        prodi: true,
       },
     });
 
@@ -180,11 +186,6 @@ const loginMahasiswa = async (request) => {
     const mahasiswa = await prisma.mahasiswa.findUnique({
       where: {
         nim: loginMahasiswaRequest.nim,
-      },
-      select: {
-        nim: true,
-        password: true,
-        prodiId: true,
       },
       include: {
         prodi: true,

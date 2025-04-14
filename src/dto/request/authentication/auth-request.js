@@ -14,6 +14,7 @@ const loginAdminSchemaRequest = Joi.object({
 const registerMahasiswaSchemaRequest = Joi.object({
   nim: Joi.string().min(3).max(7).required(),
   nama: Joi.string().min(3).max(50).required(),
+  namaProdi: Joi.string().min(3).required(),
   email: Joi.string().email().required(),
   password: Joi.string().min(2).required(),
   confirmPassword: Joi.string().min(2).required(),

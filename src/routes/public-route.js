@@ -1,6 +1,7 @@
 import express from "express";
 import fakultasController from "../controllers/fakultas-controller.js";
 import authController from "../controllers/auth-controller.js";
+import prodiController from "../controllers/prodi-controller.js";
 
 const publicRoute = express.Router();
 
@@ -12,5 +13,8 @@ publicRoute.post("/api/v1/auth/mahasiswa-login", authController.loginMahasiswa);
 // FAKULTAS
 publicRoute.get("/api/v1/fakultas/:id", fakultasController.findFakultasById);
 publicRoute.get("/api/v1/fakultas", fakultasController.findAllFakultas);
+
+// PRODI
+publicRoute.get("/api/v1/prodi/:id", prodiController.findProdiById);
 
 export { publicRoute };
