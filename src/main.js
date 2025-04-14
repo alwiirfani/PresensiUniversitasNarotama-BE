@@ -4,7 +4,6 @@ import cors from "cors";
 import { logger, loggerInfo } from "./configs/logger.js";
 import { adminRoute } from "./routes/admin-route.js";
 import { publicRoute } from "./routes/public-route.js";
-import serverless from "serverless-http";
 
 const app = express();
 app.use(cors());
@@ -20,5 +19,3 @@ if (process.env.NODE_ENV !== "production") {
     logger.info(`Server running on port ${process.env.SERVER_PORT}`);
   });
 }
-
-export default serverless(app);

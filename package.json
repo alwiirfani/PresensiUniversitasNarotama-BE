@@ -19,7 +19,6 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "serverless-http": "^3.2.0",
     "winston": "^3.17.0"
   },
   "devDependencies": {
