@@ -14,8 +14,8 @@ app.use(loggerInfo);
 
 app.use(adminRoute, publicRoute);
 
-if (process.env.NODE_ENV !== "production") {
-  app.listen(process.env.SERVER_PORT, () => {
-    logger.info(`Server running on port ${process.env.SERVER_PORT}`);
-  });
-}
+const PORT = process.env.SERVER_PORT || 8000;
+
+app.listen(PORT, () => {
+  logger.info(`Server running on port ${PORT}`);
+});
