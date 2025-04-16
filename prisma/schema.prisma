@@ -25,17 +25,16 @@ enum ScanStatus {
   SUCCESS
   FAILED_EXPIRED
   FAILED_INVALID
-  FAILED_OTHER
 }
 
 // Entitas Admin
 model Admin {
-  id        String   @id @default(uuid())
-  username  String   @unique
-  password  String
-  // refreshToken String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(uuid()) @db.VarChar(255)
+  username     String   @unique @db.VarChar(255)
+  password     String   @db.VarChar(255)
+  refreshToken String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 // Entitas Fakultas
@@ -53,9 +52,9 @@ model Fakultas {
 // Entitas Program Studi
 model Prodi {
   id         String       @id @default(uuid())
-  nama       String //@db.VarChar(255)
-  kode       String       @unique //@db.Char(3)
-  fakultasId String //@db.VarChar(255)
+  nama       String       @db.VarChar(255)
+  kode       String       @unique @db.Char(3)
+  fakultasId String       @db.VarChar(255)
   fakultas   Fakultas     @relation(fields: [fakultasId], references: [id])
   mahasiswa  Mahasiswa[]
   dosen      Dosen[]
@@ -68,11 +67,12 @@ model Prodi {
 
 // Entitas Mahasiswa
 model Mahasiswa {
-  nim                 String                @id @default(uuid()) @db.Char(7)
+  nim                 String                @id @default(uuid()) @db.Char(8)
   nama                String                @db.VarChar(255)
   email               String                @db.VarChar(50)
   password            String                @db.VarChar(255)
   alamat              String                @db.VarChar(255)
+  refreshToken        String?
   prodiId             String
   prodi               Prodi                 @relation(fields: [prodiId], references: [id])
   dosenMahasiswa      DosenMahasiswa[]
@@ -89,11 +89,12 @@ model Mahasiswa {
 
 // Entitas Dosen
 model Dosen {
-  nip              String             @id @default(uuid()) @db.Char(7)
+  nip              String             @id @default(uuid()) @db.Char(5)
   nama             String             @db.VarChar(255)
   email            String             @unique
   password         String             @db.VarChar(255)
   alamat           String             @db.VarChar(255)
+  refreshToken     String?
   prodiId          String             @db.VarChar(255)
   prodi            Prodi              @relation(fields: [prodiId], references: [id])
   dosenMahasiswa   DosenMahasiswa[]

@@ -13,23 +13,23 @@ import ResponseError from "../errors/response-error.js";
 import { v4 as uuid } from "uuid";
 import { Prisma } from "@prisma/client";
 
-// create new fakultas
+// TODO create new fakultas
 const createFakultas = async (request) => {
-  // validasi request
+  // TODO validasi request
   const createFakultasRequest = validate(createFakultasSchemaRequest, request);
 
   try {
-    // cek apakah fakultas sudah ada
+    // TODO cek apakah fakultas sudah ada
     const fakultas = await prisma.fakultas.findFirst({
       where: {
         nama: createFakultasRequest.nama,
       },
     });
 
-    // throw error jika fakultas sudah ada
+    // TODO throw error jika fakultas sudah ada
     if (fakultas) throw new ResponseError(400, "Fakultas already exist");
 
-    // membuat fakultas baru
+    // TODO membuat fakultas baru
     const createFakultas = await prisma.fakultas.create({
       data: {
         id: uuid().toString(),
@@ -44,22 +44,22 @@ const createFakultas = async (request) => {
   }
 };
 
-// update fakultas
+// TODO update fakultas
 const updateFakultas = async (request) => {
-  // validasi request
+  // TODO validasi request
   const updateFakultasRequest = validate(updateFakultasSchemaRequest, request);
 
-  // cek apakah fakultas sudah ada
+  // TODO cek apakah fakultas sudah ada
   const fakultas = await prisma.fakultas.findUnique({
     where: {
       id: updateFakultasRequest.id,
     },
   });
 
-  // throw error jika fakultas tidak ada
+  // TODO throw error jika fakultas tidak ada
   if (!fakultas) throw new ResponseError(404, "Fakultas not found");
 
-  // update fakultas
+  // TODO update fakultas
   const fakultasUpdated = await prisma.fakultas.update({
     where: {
       id: updateFakultasRequest.id,
@@ -74,14 +74,14 @@ const updateFakultas = async (request) => {
   return updateFakultasResponse(fakultasUpdated);
 };
 
-// find fakultas by id
+// TODO find fakultas by id
 const findFakultasById = async (fakultasId) => {
-  // validasi fakultas id
+  // TODO validasi fakultas id
   if (!fakultasId || typeof fakultasId !== "string")
     throw new ResponseError(400, "Fakultas ID is not valid");
 
   try {
-    // cek apakah fakultas sudah ada
+    // TODO cek apakah fakultas sudah ada
     const fakultas = await prisma.fakultas.findUnique({
       where: {
         id: fakultasId,
@@ -91,7 +91,7 @@ const findFakultasById = async (fakultasId) => {
       },
     });
 
-    // throw error jika fakultas tidak ada
+    // TODO throw error jika fakultas tidak ada
     if (!fakultas) throw new ResponseError(404, "Fakultas not found");
 
     return findFakultasByIdResponse(fakultas);
@@ -100,21 +100,21 @@ const findFakultasById = async (fakultasId) => {
   }
 };
 
-// find fakultas by name
+// TODO find fakultas by name
 const findFakultasByName = async (fakultasName) => {
-  // validasi fakultas name
+  // TODO validasi fakultas name
   if (!fakultasName || typeof fakultasName !== "string")
     throw new ResponseError(400, "Fakultas name is not valid");
 
   try {
-    // cek apakah fakultas sudah ada
+    // TODO cek apakah fakultas sudah ada
     const fakultas = await prisma.fakultas.findFirst({
       where: {
         nama: fakultasName,
       },
     });
 
-    // throw error jika fakultas tidak ada
+    // TODO throw error jika fakultas tidak ada
     if (!fakultas) throw new ResponseError(404, "Fakultas not found");
 
     return fakultas;
@@ -123,20 +123,20 @@ const findFakultasByName = async (fakultasName) => {
   }
 };
 
-// find all fakultas
+// TODO find all fakultas
 const findAllFakultas = async ({ nama, dekan, page = 1, pageSize = 10 }) => {
-  // validasi page dan page size
+  // TODO validasi page dan page size
   if (isNaN(page) || isNaN(pageSize) || page < 1 || pageSize < 1)
     throw new ResponseError(400, "Invalid pagination parameters");
 
-  // filter fakultas by nama dan dekan
+  // TODO filter fakultas by nama dan dekan
   const where = {};
   if (nama) where.nama = { contains: nama, mode: "insensitive" };
   if (dekan) where.dekan = { contains: dekan, mode: "insensitive" };
 
   try {
     const [fakultasList, totalItems] = await Promise.all([
-      // find all fakultas dengan pagination dan include prodi
+      // TODO find all fakultas dengan pagination dan include prodi
       prisma.fakultas.findMany({
         skip: (page - 1) * pageSize,
         take: pageSize,
@@ -145,7 +145,7 @@ const findAllFakultas = async ({ nama, dekan, page = 1, pageSize = 10 }) => {
         orderBy: { createdAt: "desc" },
       }),
 
-      // count total fakultas
+      // TODO count total fakultas
       prisma.fakultas.count({ where }),
     ]);
 
@@ -162,7 +162,7 @@ const findAllFakultas = async ({ nama, dekan, page = 1, pageSize = 10 }) => {
       },
     };
   } catch (error) {
-    // handle error prisma
+    // TODO handle error prisma
     if (error instanceof Prisma.PrismaClientKnownRequestError)
       throw new ResponseError(500, "Database error");
 
@@ -170,24 +170,24 @@ const findAllFakultas = async ({ nama, dekan, page = 1, pageSize = 10 }) => {
   }
 };
 
-// delete fakultas
+// TODO delete fakultas
 const deleteFakultas = async (fakultasId) => {
-  // validasi fakultas id
+  // TODO validasi fakultas id
   if (!fakultasId || typeof fakultasId !== "string")
     throw new ResponseError(400, "Fakultas ID is not valid");
 
   try {
-    // cek apakah fakultas sudah ada
+    // TODO cek apakah fakultas sudah ada
     const fakultas = await prisma.fakultas.findUnique({
       where: {
         id: fakultasId,
       },
     });
 
-    // throw error jika fakultas tidak ada
+    // TODO throw error jika fakultas tidak ada
     if (!fakultas) throw new ResponseError(404, "Fakultas not found");
 
-    // delete fakultas
+    // TODO delete fakultas
     await prisma.fakultas.delete({
       where: {
         id: fakultasId,

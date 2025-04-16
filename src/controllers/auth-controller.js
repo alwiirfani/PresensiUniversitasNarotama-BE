@@ -2,10 +2,10 @@ import authService from "../services/auth-service.js";
 
 const registerAdmin = async (req, res, next) => {
   try {
-    // panggil service
+    // TODO panggil service
     const response = await authService.registerAdmin(req.body);
 
-    // kirim response
+    // TODO kirim response
     res.status(201).json({
       status: 201,
       message: "Admin created successfully",
@@ -19,10 +19,17 @@ const registerAdmin = async (req, res, next) => {
 
 const loginAdmin = async (req, res, next) => {
   try {
-    // panggil service
+    // TODO panggil service
     const response = await authService.loginAdmin(req.body);
 
-    // kirim response
+    // TODO response cookie
+    res.cookie("refreshToken", response.refreshToken, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    // TODO kirim response
     res.status(200).json({
       status: 200,
       message: "Admin logged in successfully",
@@ -36,10 +43,10 @@ const loginAdmin = async (req, res, next) => {
 
 const registerMahasiswa = async (req, res, next) => {
   try {
-    // panggil service
+    // TODO panggil service
     const response = await authService.registerMahasiswa(req.body);
 
-    // kirim response
+    // TODO kirim response
     res.status(201).json({
       status: 201,
       message: "Mahasiswa created successfully",
@@ -53,13 +60,37 @@ const registerMahasiswa = async (req, res, next) => {
 
 const loginMahasiswa = async (req, res, next) => {
   try {
-    // panggil service
+    // TODO panggil service
     const response = await authService.loginMahasiswa(req.body);
 
-    // kirim response
+    // TODO response cookie
+    res.cookie("refreshToken", response.refreshToken, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    // TODO kirim response
     res.status(200).json({
       status: 200,
       message: "Mahasiswa logged in successfully",
+      data: response,
+    });
+  } catch (error) {
+    const status = error.status || 500;
+    next(res.status(status).json({ status: status, message: error.message }));
+  }
+};
+
+const refreshToken = async (req, res, next) => {
+  try {
+    // TODO panggil service
+    const response = await authService.refreshToken(req.cookies.refreshToken);
+
+    // TODO response
+    res.status(200).json({
+      status: 200,
+      message: "Token refreshed successfully",
       data: response,
     });
   } catch (error) {
@@ -73,4 +104,5 @@ export default {
   loginAdmin,
   registerMahasiswa,
   loginMahasiswa,
+  refreshToken,
 };

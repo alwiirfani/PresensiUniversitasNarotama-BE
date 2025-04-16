@@ -10,16 +10,16 @@ import ResponseError from "../errors/response-error.js";
 import { v4 as uuid } from "uuid";
 
 const createProdi = async (request) => {
-  // validasi request
+  // TODO validasi request
   const createProdiRequest = validate(createProdiSchemaRequest, request);
 
   try {
-    // cek fakultas apakah ada
+    // TODO cek fakultas apakah ada
     const fakultas = await fakultasService.findFakultasByName(
       createProdiRequest.namaFakultas
     );
 
-    // cek prodi apakah ada
+    // TODO cek prodi apakah ada
     const prodiExist = await prisma.prodi.findFirst({
       where: {
         nama: createProdiRequest.nama,
@@ -27,10 +27,10 @@ const createProdi = async (request) => {
       },
     });
 
-    // throw error jika prodi sudah ada
+    // TODO throw error jika prodi sudah ada
     if (prodiExist) throw new ResponseError(400, "Prodi already exist");
 
-    // membuat prodi baru
+    // TODO membuat prodi baru
     const createProdi = await prisma.prodi.create({
       data: {
         id: uuid().toString(),
@@ -51,12 +51,12 @@ const createProdi = async (request) => {
 };
 
 const findProdiById = async (prodiId) => {
-  // validasi prodi id
+  // TODO validasi prodi id
   if (!prodiId || typeof prodiId !== "string")
     throw new ResponseError(400, "Prodi ID is not valid");
 
   try {
-    // cek apakah prodi sudah ada
+    // TODO cek apakah prodi sudah ada
     const prodi = await prisma.prodi.findUnique({
       where: {
         id: prodiId,
@@ -66,7 +66,7 @@ const findProdiById = async (prodiId) => {
       },
     });
 
-    // throw error jika prodi tidak ada
+    // TODO throw error jika prodi tidak ada
     if (!prodi) throw new ResponseError(404, "Prodi not found");
 
     return findProdiByIdResponse(prodi);
@@ -76,12 +76,12 @@ const findProdiById = async (prodiId) => {
 };
 
 const findProdiByName = async (prodiName) => {
-  // validasi prodi name
+  // TODO validasi prodi name
   if (!prodiName || typeof prodiName !== "string")
     throw new ResponseError(400, "Prodi name is not valid");
 
   try {
-    // cek apakah prodi sudah ada
+    // TODO cek apakah prodi sudah ada
     const prodi = await prisma.prodi.findFirst({
       where: {
         nama: prodiName,
@@ -91,7 +91,7 @@ const findProdiByName = async (prodiName) => {
       },
     });
 
-    // throw error jika prodi tidak ada
+    // TODO throw error jika prodi tidak ada
     if (!prodi) throw new ResponseError(404, "Prodi not found");
 
     return prodi;

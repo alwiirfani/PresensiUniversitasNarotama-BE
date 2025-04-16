@@ -17,33 +17,33 @@ import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
 import prodiService from "./prodi-service.js";
 
-// resgister admin
+// TODO resgister admin
 const registerAdmin = async (request) => {
-  // validasi request
+  // TODO validasi request
   const registerAdminRequest = validate(registerAdminSchemaRequest, request);
 
   try {
-    // cek password dan confirm password
+    // TODO cek password dan confirm password
     if (registerAdminRequest.password !== registerAdminRequest.confirmPassword)
       throw new ResponseError(
         400,
         "Password and confirm password must be same"
       );
 
-    // cek apakah username sudah terdaftar
+    // TODO cek apakah username sudah terdaftar
     const adminExist = await prisma.admin.findUnique({
       where: {
         username: registerAdminRequest.username,
       },
     });
 
-    // throw error jika username sudah terdaftar
+    // TODO throw error jika username sudah terdaftar
     if (adminExist) throw new ResponseError(400, "Username already exist");
 
-    // hash password
+    // TODO hash password
     const hashedPassword = await bcrypt.hash(registerAdminRequest.password, 10);
 
-    // buat admin
+    // TODO buat admin
     const newAdmin = await prisma.admin.create({
       data: {
         id: uuid().toString(),
@@ -59,37 +59,37 @@ const registerAdmin = async (request) => {
   }
 };
 
-// login admin
+// TODO login admin
 const loginAdmin = async (request) => {
-  // validasi request
+  // TODO validasi request
   const loginAdminRequest = validate(loginAdminSchemaRequest, request);
 
   try {
-    // cek admin
+    // TODO cek admin
     const admin = await prisma.admin.findUnique({
       where: {
         username: loginAdminRequest.username,
       },
     });
 
-    // cek apakah admin sudah terdaftar throw error
+    // TODO cek apakah admin sudah terdaftar throw error
     if (!admin)
       throw new ResponseError(
         404,
         `Admin with username ${loginAdminRequest.username} not found`
       );
 
-    // cek password
+    // TODO cek password
     const isPasswordMatch = await bcrypt.compare(
       loginAdminRequest.password,
       admin.password
     );
 
-    // throw error jika password salah
+    // TODO throw error jika password salah
     if (!isPasswordMatch) throw new ResponseError(400, "Password is incorrect");
 
-    // buat token
-    const token = jwt.sign(
+    // TODO buat access token
+    const accessToken = jwt.sign(
       {
         id: admin.id,
         username: admin.username,
@@ -98,23 +98,50 @@ const loginAdmin = async (request) => {
       process.env.JWT_SECRET,
       {
         algorithm: "HS256",
+        expiresIn: "1m",
+        subject: admin.username,
+      }
+    );
+
+    // TODO buat refresh token
+    const refreshToken = jwt.sign(
+      {
+        id: admin.id,
+        username: admin.username,
+        role: "admin",
+      },
+      process.env.JWT_REFRESH_SECRET,
+      {
+        algorithm: "HS256",
         expiresIn: "1d",
         subject: admin.username,
       }
     );
 
+    // TODO update admin
+    await prisma.admin.update({
+      data: {
+        refreshToken: refreshToken,
+        updatedAt: new Date(),
+      },
+      where: {
+        id: admin.id,
+      },
+    });
+
     return {
       id: admin.id,
       username: admin.username,
       role: "admin",
-      token: token,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     };
   } catch (error) {
     throw new ResponseError(error.status, error.message);
   }
 };
 
-// register mahasiswa
+// TODO register mahasiswa
 const registerMahasiswa = async (request) => {
   const registerMahasiswaRequest = validate(
     registerMahasiswaSchemaRequest,
@@ -122,12 +149,12 @@ const registerMahasiswa = async (request) => {
   );
 
   try {
-    // cek prodi apakah ada
+    // TODO cek prodi apakah ada
     const prodi = await prodiService.findProdiByName(
       registerMahasiswaRequest.namaProdi
     );
 
-    // cek password dan confirm password
+    // TODO cek password dan confirm password
     if (
       registerMahasiswaRequest.password !==
       registerMahasiswaRequest.confirmPassword
@@ -137,7 +164,7 @@ const registerMahasiswa = async (request) => {
         "Password and confirm password must be same"
       );
 
-    // cek apakah nim sudah terdaftar
+    // TODO cek apakah nim sudah terdaftar
     const mahasiswaExist = await prisma.mahasiswa.findUnique({
       where: {
         nim: registerMahasiswaRequest.nim,
@@ -145,16 +172,16 @@ const registerMahasiswa = async (request) => {
       },
     });
 
-    // throw error jika nim sudah terdaftar
+    // TODO throw error jika nim sudah terdaftar
     if (mahasiswaExist) throw new ResponseError(400, "NIM already exist");
 
-    // hash password
+    // TODO hash password
     const hashedPassword = await bcrypt.hash(
       registerMahasiswaRequest.password,
       10
     );
 
-    // buat mahasiswa
+    // TODO buat mahasiswa
     const newMahasiswa = await prisma.mahasiswa.create({
       data: {
         nim: registerMahasiswaRequest.nim,
@@ -176,13 +203,13 @@ const registerMahasiswa = async (request) => {
   }
 };
 
-// login mahasiswa
+// TODO login mahasiswa
 const loginMahasiswa = async (request) => {
-  // validasi request
+  // TODO validasi request
   const loginMahasiswaRequest = validate(loginMahasiswaSchemaRequest, request);
 
   try {
-    // cek mahasiswa
+    // TODO cek mahasiswa
     const mahasiswa = await prisma.mahasiswa.findUnique({
       where: {
         nim: loginMahasiswaRequest.nim,
@@ -192,14 +219,14 @@ const loginMahasiswa = async (request) => {
       },
     });
 
-    // cek apakah mahasiswa sudah terdaftar throw error
+    // TODO cek apakah mahasiswa sudah terdaftar throw error
     if (!mahasiswa)
       throw new ResponseError(
         404,
         `Mahasiswa with NIM ${loginMahasiswaRequest.nim} not found`
       );
 
-    // verify password
+    // TODO verify password
     const isPasswordValid = await bcrypt.compare(
       loginMahasiswaRequest.password,
       mahasiswa.password
@@ -207,8 +234,8 @@ const loginMahasiswa = async (request) => {
 
     if (!isPasswordValid) throw new ResponseError(401, "Invalid password");
 
-    // buat token
-    const token = jwt.sign(
+    // TODO buat token
+    const accessToken = jwt.sign(
       {
         nim: mahasiswa.nim,
         nama: mahasiswa.nama,
@@ -217,20 +244,156 @@ const loginMahasiswa = async (request) => {
       process.env.JWT_SECRET,
       {
         algorithm: "HS256",
-        expiresIn: "1h",
+        expiresIn: "1s",
         subject: mahasiswa.email,
       }
     );
+
+    // TODO buat refresh token
+    const refreshToken = jwt.sign(
+      {
+        nim: mahasiswa.nim,
+        nama: mahasiswa.nama,
+        role: "mahasiswa",
+      },
+      process.env.JWT_REFRESH_SECRET,
+      {
+        algorithm: "HS256",
+        expiresIn: "1d",
+        subject: mahasiswa.email,
+      }
+    );
+
+    // TODO update mahasiswa
+    await prisma.mahasiswa.update({
+      data: {
+        refreshToken: refreshToken,
+        updatedAt: new Date(),
+      },
+      where: {
+        nim: mahasiswa.nim,
+      },
+    });
 
     return {
       nim: mahasiswa.nim,
       nama: mahasiswa.nama,
       role: "mahasiswa",
-      token: token,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     };
   } catch (error) {
     throw new ResponseError(error.status, error.message);
   }
 };
 
-export default { registerAdmin, loginAdmin, registerMahasiswa, loginMahasiswa };
+// TODO refresh token
+const refreshToken = async (request) => {
+  try {
+    // TODO decode refresh token
+    const decode = jwt.verify(request, process.env.JWT_REFRESH_SECRET);
+
+    // TODO inisialisasi variable access token
+    let accessToken;
+
+    /** TODO cek apakah token ini rolenya admin/dosen/mahasiswa?,
+     jika iya, maka access token untuk admin
+     jika dosen maka access token untuk dosen
+     jika admin maka access token untuk mahasiswa
+     */
+    if (decode.role === "admin") {
+      const admin = await prisma.admin.findUnique({
+        where: {
+          username: decode.username,
+        },
+      });
+
+      if (!admin)
+        throw new ResponseError(
+          404,
+          `Admin with username ${decode.username} not found`
+        );
+
+      accessToken = jwt.sign(
+        {
+          id: decode.id,
+          username: decode.username,
+          role: "admin",
+        },
+        process.env.JWT_SECRET,
+        {
+          algorithm: "HS256",
+          expiresIn: "1d",
+          subject: decode.username,
+        }
+      );
+    }
+
+    if (decode.role === "dosen") {
+      const dosen = await prisma.dosen.findFirst({
+        where: {
+          nip: decode.nip,
+        },
+      });
+
+      if (!dosen)
+        throw new ResponseError(404, `Dosen with NIP ${decode.nip} not found`);
+
+      accessToken = jwt.sign(
+        {
+          nip: decode.nip,
+          namae: decode.nama,
+          role: "dosen",
+        },
+        process.env.JWT_SECRET,
+        {
+          algorithm: "HS256",
+          expiresIn: "1d",
+          subject: decode.email,
+        }
+      );
+    }
+
+    if (decode.role === "mahasiswa") {
+      const mahasiswa = await prisma.mahasiswa.findFirst({
+        where: {
+          nim: decode.nim,
+        },
+      });
+
+      if (!mahasiswa)
+        throw new ResponseError(
+          404,
+          `Mahasiswa with NIM ${decode.nim} not found`
+        );
+
+      accessToken = jwt.sign(
+        {
+          nim: decode.nim,
+          nama: decode.nama,
+          role: "mahasiswa",
+        },
+        process.env.JWT_SECRET,
+        {
+          algorithm: "HS256",
+          expiresIn: "1d",
+          subject: decode.email,
+        }
+      );
+    }
+
+    return {
+      accessToken: accessToken,
+    };
+  } catch (error) {
+    throw new ResponseError(error.status, error.message);
+  }
+};
+
+export default {
+  registerAdmin,
+  loginAdmin,
+  registerMahasiswa,
+  loginMahasiswa,
+  refreshToken,
+};

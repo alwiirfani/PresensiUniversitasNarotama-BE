@@ -2,10 +2,10 @@ import fakultasService from "../services/fakultas-service.js";
 
 const createFakultas = async (req, res, next) => {
   try {
-    // panggil service
+    // TODO panggil service
     const response = await fakultasService.createFakultas(req.body);
 
-    // kirim response
+    // TODO kirim response
     res.status(201).json({
       status: 201,
       message: "Fakultas created successfully",
@@ -19,10 +19,10 @@ const createFakultas = async (req, res, next) => {
 
 const updateFakultas = async (req, res, next) => {
   try {
-    // panggil service
+    // TODO panggil service
     const response = await fakultasService.updateFakultas(req.body);
 
-    // kirim response
+    // TODO kirim response
     res.status(200).json({
       status: 200,
       message: "Fakultas updated successfully",
@@ -36,10 +36,10 @@ const updateFakultas = async (req, res, next) => {
 
 const findFakultasById = async (req, res, next) => {
   try {
-    // panggil service
+    // TODO panggil service
     const response = await fakultasService.findFakultasById(req.params.id);
 
-    // kirim response
+    // TODO kirim response
     res.status(200).json({
       status: 200,
       message: "FInd Fakultas by Id successfully",
@@ -53,12 +53,12 @@ const findFakultasById = async (req, res, next) => {
 
 const findAllFakultas = async (req, res, next) => {
   try {
-    // validasi input
+    // TODO validasi input
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;
     const { nama, dekan } = req.query;
 
-    // find all fakultas
+    // TODO find all fakultas
     const response = await fakultasService.findAllFakultas({
       page,
       pageSize,
@@ -66,7 +66,7 @@ const findAllFakultas = async (req, res, next) => {
       dekan,
     });
 
-    // kirim response
+    // TODO kirim response
     res.status(200).json({
       status: 200,
       message: "Find All Fakultas successfully",
@@ -81,10 +81,10 @@ const findAllFakultas = async (req, res, next) => {
 
 const deleteFakultas = async (req, res, next) => {
   try {
-    // panggil service
+    // TODO panggil service
     const response = await fakultasService.deleteFakultas(req.params.id);
 
-    // kirim response
+    // TODO kirim response
     res.status(200).json({
       status: 200,
       message: `Fakultas ${response.name} deleted successfully`,

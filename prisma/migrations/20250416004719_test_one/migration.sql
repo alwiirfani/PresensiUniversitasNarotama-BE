@@ -7,7 +7,7 @@ CREATE TYPE "ScanStatus" AS ENUM ('SUCCESS', 'FAILED_EXPIRED', 'FAILED_INVALID',
 -- CreateTable
 CREATE TABLE "Admin" (
     "id" TEXT NOT NULL,
-    "username" TEXT NOT NULL,
+    "username" VARCHAR(255) NOT NULL,
     "password" TEXT NOT NULL,
     "refreshToken" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -30,9 +30,9 @@ CREATE TABLE "Fakultas" (
 -- CreateTable
 CREATE TABLE "Prodi" (
     "id" TEXT NOT NULL,
-    "nama" TEXT NOT NULL,
-    "kode" TEXT NOT NULL,
-    "fakultasId" TEXT NOT NULL,
+    "nama" VARCHAR(255) NOT NULL,
+    "kode" CHAR(3) NOT NULL,
+    "fakultasId" VARCHAR(255) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -41,11 +41,12 @@ CREATE TABLE "Prodi" (
 
 -- CreateTable
 CREATE TABLE "Mahasiswa" (
-    "nim" CHAR(7) NOT NULL,
+    "nim" CHAR(8) NOT NULL,
     "nama" VARCHAR(255) NOT NULL,
     "email" VARCHAR(50) NOT NULL,
     "password" VARCHAR(255) NOT NULL,
     "alamat" VARCHAR(255) NOT NULL,
+    "refreshToken" TEXT,
     "prodiId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -55,11 +56,12 @@ CREATE TABLE "Mahasiswa" (
 
 -- CreateTable
 CREATE TABLE "Dosen" (
-    "nip" CHAR(7) NOT NULL,
+    "nip" CHAR(5) NOT NULL,
     "nama" VARCHAR(255) NOT NULL,
     "email" TEXT NOT NULL,
     "password" VARCHAR(255) NOT NULL,
     "alamat" VARCHAR(255) NOT NULL,
+    "refreshToken" TEXT,
     "prodiId" VARCHAR(255) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
