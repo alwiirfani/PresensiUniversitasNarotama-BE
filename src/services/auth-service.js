@@ -349,7 +349,7 @@ const refreshToken = async (request) => {
         {
           algorithm: "HS256",
           expiresIn: "1d",
-          subject: decode.email,
+          subject: dosen.email,
         }
       );
     }
@@ -377,7 +377,7 @@ const refreshToken = async (request) => {
         {
           algorithm: "HS256",
           expiresIn: "1d",
-          subject: decode.email,
+          subject: mahasiswa.email,
         }
       );
     }

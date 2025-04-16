@@ -69,7 +69,7 @@ model Prodi {
 model Mahasiswa {
   nim                 String                @id @default(uuid()) @db.Char(8)
   nama                String                @db.VarChar(255)
-  email               String                @db.VarChar(50)
+  email               String                @unique @db.VarChar(50)
   password            String                @db.VarChar(255)
   alamat              String                @db.VarChar(255)
   refreshToken        String?
@@ -91,7 +91,7 @@ model Mahasiswa {
 model Dosen {
   nip              String             @id @default(uuid()) @db.Char(5)
   nama             String             @db.VarChar(255)
-  email            String             @unique
+  email            String             @unique @db.VarChar(255)
   password         String             @db.VarChar(255)
   alamat           String             @db.VarChar(255)
   refreshToken     String?
