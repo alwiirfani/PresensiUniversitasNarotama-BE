@@ -88,6 +88,48 @@ const loginAdmin = async (request) => {
     // TODO throw error jika password salah
     if (!isPasswordMatch) throw new ResponseError(400, "Password is incorrect");
 
+    // TODO cek apakah refresh token sudah expired (untuk user lama)
+    if (admin.refreshToken) {
+      try {
+        jwt.verify(admin.refreshToken, process.env.JWT_REFRESH_SECRET);
+      } catch (error) {
+        // TODO jika refresh token sudah expired
+        if (error.name === "TokenExpiredError") {
+          // TODO update refresh token
+          await prisma.admin.update({
+            data: {
+              refreshToken: null,
+              updatedAt: new Date(),
+            },
+            where: {
+              id: admin.id,
+            },
+          });
+        }
+      }
+    }
+
+    // TODO cek apakah refresh token sudah expired (untuk user lama)
+    if (admin.refreshToken) {
+      try {
+        jwt.verify(admin.refreshToken, process.env.JWT_REFRESH_SECRET);
+      } catch (error) {
+        // TODO jika refresh token sudah expired
+        if (error.name === "TokenExpiredError") {
+          // TODO update refresh token
+          await prisma.admin.update({
+            data: {
+              refreshToken: null,
+              updatedAt: new Date(),
+            },
+            where: {
+              id: admin.id,
+            },
+          });
+        }
+      }
+    }
+
     // TODO buat access token
     const accessToken = jwt.sign(
       {
@@ -233,6 +275,27 @@ const loginMahasiswa = async (request) => {
     );
 
     if (!isPasswordValid) throw new ResponseError(401, "Invalid password");
+
+    // TODO cek apakah refresh token sudah expired (untuk user lama)
+    if (mahasiswa.refreshToken) {
+      try {
+        jwt.verify(mahasiswa.refreshToken, process.env.JWT_REFRESH_SECRET);
+      } catch (error) {
+        // TODO jika refresh token sudah expired
+        if (error.name === "TokenExpiredError") {
+          // TODO update refresh token
+          await prisma.mahasiswa.update({
+            data: {
+              refreshToken: null,
+              updatedAt: new Date(),
+            },
+            where: {
+              nim: mahasiswa.nim,
+            },
+          });
+        }
+      }
+    }
 
     // TODO buat token
     const accessToken = jwt.sign(
@@ -390,10 +453,105 @@ const refreshToken = async (request) => {
   }
 };
 
+// TODO logout
+const logout = async (refreshToken) => {
+  try {
+    // TODO cek apakah refresh token ada?
+    if (!refreshToken)
+      throw new ResponseError(204, "no content of refresh token");
+
+    // TODO decode refresh token
+    const decode = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+
+    /** TODO cek apakah token ini rolenya admin/dosen/mahasiswa?,
+     jika iya, maka hapus refresh token untuk table admin
+     jika dosen maka hapus refresh token untuk table dosen
+     jika admin maka hapus refresh token untuk table mahasiswa
+     */
+    if (decode.role === "admin") {
+      // TODO cek admin ada atau tidak
+      const admin = await prisma.admin.findFirst({
+        where: {
+          refreshToken: refreshToken,
+        },
+      });
+
+      // TODO throw error jika admin tidak ada
+      if (!admin) throw new ResponseError(404, "Admin not found");
+
+      // TODO hapus refresh token
+      await prisma.admin.update({
+        data: {
+          refreshToken: null,
+          updatedAt: new Date(),
+        },
+        where: {
+          username: decode.username,
+        },
+      });
+    }
+
+    if (decode.role === "dosen") {
+      // TODO cek dosen ada atau tidak
+      const dosen = await prisma.dosen.findFirst({
+        where: {
+          refreshToken: refreshToken,
+        },
+      });
+
+      // TODO throw error jika dosen tidak ada
+      if (!dosen) throw new ResponseError(404, "Dosen not found");
+
+      // TODO hapus refresh token
+      await prisma.dosen.update({
+        data: {
+          refreshToken: null,
+          updatedAt: new Date(),
+        },
+        where: {
+          nip: decode.nip,
+        },
+      });
+    }
+
+    if (decode.role === "mahasiswa") {
+      // TODO cek mahasiwa ada atau tidak
+      const mahasiswa = await prisma.mahasiswa.findFirst({
+        where: {
+          refreshToken: refreshToken,
+        },
+      });
+
+      // TODO throw error jika mahasiswa tidak ada
+      if (!mahasiswa)
+        throw new ResponseError(
+          404,
+          `Mahasiswa with NIM ${decode.nim} not found`
+        );
+
+      // TODO hapus refresh token
+      await prisma.mahasiswa.update({
+        data: {
+          refreshToken: null,
+          updatedAt: new Date(),
+        },
+        where: {
+          nim: decode.nim,
+        },
+      });
+    }
+
+    return;
+  } catch (error) {
+    throw new ResponseError(error.status, error.message);
+  }
+};
+
 export default {
   registerAdmin,
   loginAdmin,
   registerMahasiswa,
   loginMahasiswa,
   refreshToken,
+  logout,
 };

@@ -27,6 +27,7 @@ const loginAdmin = async (req, res, next) => {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 1 day
       secure: process.env.NODE_ENV === "production",
+      sameSite: "strict", // Lakukan pengecekan CSRF
     });
 
     // TODO kirim response
@@ -99,10 +100,29 @@ const refreshToken = async (req, res, next) => {
   }
 };
 
+const logout = async (req, res, next) => {
+  try {
+    // TODO panggil service
+    await authService.logout(req.cookies.refreshToken);
+
+    // hapus cookie
+    res.clearCookie("refreshToken");
+
+    // TODO kirim response
+    res.status(200).json({
+      status: 200,
+      message: "Logout successfully",
+    });
+  } catch (error) {
+    const status = error.status || 500;
+    next(res.status(status).json({ status: status, message: error.message }));
+  }
+};
 export default {
   registerAdmin,
   loginAdmin,
   registerMahasiswa,
   loginMahasiswa,
   refreshToken,
+  logout,
 };

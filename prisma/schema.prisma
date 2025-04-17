@@ -27,16 +27,6 @@ enum ScanStatus {
   FAILED_INVALID
 }
 
-// Entitas Admin
-model Admin {
-  id           String   @id @default(uuid()) @db.VarChar(255)
-  username     String   @unique @db.VarChar(255)
-  password     String   @db.VarChar(255)
-  refreshToken String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-}
-
 // Entitas Fakultas
 model Fakultas {
   id        String   @id @default(uuid()) @db.VarChar(255)
@@ -63,6 +53,16 @@ model Prodi {
   updatedAt  DateTime     @updatedAt
 
   @@index([nama, kode])
+}
+
+// Entitas Admin
+model Admin {
+  id           String   @id @default(uuid()) @db.VarChar(255)
+  username     String   @unique @db.VarChar(255)
+  password     String   @db.VarChar(255)
+  refreshToken String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 // Entitas Mahasiswa
