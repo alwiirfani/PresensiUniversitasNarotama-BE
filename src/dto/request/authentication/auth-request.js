@@ -12,7 +12,7 @@ const loginAdminSchemaRequest = Joi.object({
 });
 
 const registerDosenSchemaRequest = Joi.object({
-  nip: Joi.string().min(3).max(5).required(),
+  nip: Joi.string().required(5),
   nama: Joi.string().min(3).max(50).required(),
   namaProdi: Joi.string().min(3).required(),
   email: Joi.string().email().required(),

@@ -141,6 +141,11 @@ const registerDosen = async (request) => {
   const registerDosenRequest = validate(registerDosenSchemaRequest, request);
 
   try {
+    // TOD cek prodi apakah ada
+    const prodi = await prodiService.findProdiByName(
+      registerDosenRequest.namaProdi
+    );
+
     // TODO cek password dan confirm password
     if (registerDosenRequest.password !== registerDosenRequest.confirmPassword)
       throw new ResponseError(
@@ -150,7 +155,7 @@ const registerDosen = async (request) => {
 
     // TODO cek apakah nip sudah terdaftar
     const dosenExist = await prisma.dosen.findFirst({
-      where: { nama: registerDosenRequest.nama },
+      where: { nip: registerDosenRequest.nip, prodiId: prodi.id },
     });
 
     // TODO throw error jika nip sudah terdaftar
@@ -164,7 +169,7 @@ const registerDosen = async (request) => {
       data: {
         nip: registerDosenRequest.nip,
         nama: registerDosenRequest.nama,
-        namaProdi: registerDosenRequest.namaProdi,
+        prodiId: prodi.id,
         email: registerDosenRequest.email,
         password: hashedPassword,
         alamat: registerDosenRequest.alamat,
