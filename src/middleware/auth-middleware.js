@@ -104,9 +104,73 @@ const verifyTokenAdmin = (req, res, next) => {
   }
 };
 
+const verifyTokenAdminOrDosen = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token)
+    return res
+      .status(403)
+      .json({ status: 403, message: "A token is required for authentication" });
+
+  try {
+    const decode = jwt.verify(token, process.env.JWT_SECRET);
+
+    console.log(decode);
+
+    // verify role throw error if role is not admin or dosen
+    if (decode.role === "admin" || decode.role === "dosen") {
+      // set user
+      req.user = decode;
+      return next();
+    } else {
+      // throw error
+      return res.status(401).json({
+        status: 401,
+        message: "You are not authorized to access this resource",
+      });
+    }
+  } catch (error) {
+    return res.status(401).json({ status: 401, message: "Invalid Token" });
+  }
+};
+
+const verifyTokenAdminOrMahasiswa = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token)
+    return res
+      .status(403)
+      .json({ status: 403, message: "A token is required for authentication" });
+
+  try {
+    const decode = jwt.verify(token, process.env.JWT_SECRET);
+
+    console.log(decode);
+
+    // verify role throw error if role is not admin or mahasiswa
+    if (decode.role === "admin" || decode.role === "mahasiswa") {
+      // set user
+      req.user = decode;
+      return next();
+    } else {
+      // throw error
+      return res.status(401).json({
+        status: 401,
+        message: "You are not authorized to access this resource",
+      });
+    }
+  } catch (error) {
+    return res.status(401).json({ status: 401, message: "Invalid Token" });
+  }
+};
+
 export {
   verifyToken,
   verifyTokenMahasiswa,
   verifyTokenDosen,
   verifyTokenAdmin,
+  verifyTokenAdminOrDosen,
+  verifyTokenAdminOrMahasiswa,
 };

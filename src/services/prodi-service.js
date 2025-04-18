@@ -26,10 +26,7 @@ const createProdi = async (request) => {
 
     // TODO cek prodi apakah ada
     const prodiExist = await prisma.prodi.findFirst({
-      where: {
-        nama: createProdiRequest.nama,
-        fakultasId: fakultas.id,
-      },
+      where: { nama: createProdiRequest.nama, fakultasId: fakultas.id },
     });
 
     // TODO throw error jika prodi sudah ada
@@ -44,9 +41,7 @@ const createProdi = async (request) => {
         fakultasId: fakultas.id,
         createdAt: new Date(),
       },
-      include: {
-        fakultas: true,
-      },
+      include: { fakultas: true },
     });
 
     return createProdiResponse(createProdi);
@@ -61,9 +56,7 @@ const updateProdi = async (request) => {
 
   // TODO cek apakah prodi sudah ada
   const prodi = await prisma.prodi.findUnique({
-    where: {
-      id: updateProdiRequest.id,
-    },
+    where: { id: updateProdiRequest.id },
   });
 
   // TODO throw error jika tidak ada
@@ -71,9 +64,7 @@ const updateProdi = async (request) => {
 
   // TODO cek apakah fakultas ada
   const fakultasExist = await prisma.fakultas.findFirst({
-    where: {
-      nama: updateProdiRequest.namaFakultas,
-    },
+    where: { nama: updateProdiRequest.namaFakultas },
   });
 
   // TODO throw error jika fakultas tidak ada
@@ -81,18 +72,14 @@ const updateProdi = async (request) => {
 
   // TODO update prodi
   const prodiUpdated = await prisma.prodi.update({
-    where: {
-      id: updateProdiRequest.id,
-    },
+    where: { id: updateProdiRequest.id },
     data: {
       nama: updateProdiRequest.nama,
       kode: updateProdiRequest.kode,
       fakultasId: fakultasExist.id,
       updatedAt: new Date(),
     },
-    include: {
-      fakultas: true,
-    },
+    include: { fakultas: true },
   });
 
   return updateProdiResponse(prodiUpdated);
@@ -106,12 +93,8 @@ const findProdiById = async (prodiId) => {
   try {
     // TODO cek apakah prodi sudah ada
     const prodi = await prisma.prodi.findUnique({
-      where: {
-        id: prodiId,
-      },
-      include: {
-        fakultas: true,
-      },
+      where: { id: prodiId },
+      include: { fakultas: true },
     });
 
     // TODO throw error jika prodi tidak ada
@@ -131,12 +114,8 @@ const findProdiByName = async (prodiName) => {
   try {
     // TODO cek apakah prodi sudah ada
     const prodi = await prisma.prodi.findFirst({
-      where: {
-        nama: prodiName,
-      },
-      include: {
-        fakultas: true,
-      },
+      where: { nama: prodiName },
+      include: { fakultas: true },
     });
 
     // TODO throw error jika prodi tidak ada
@@ -230,4 +209,5 @@ export default {
   findProdiById,
   findProdiByName,
   findAllProdi,
+  deleteProdi,
 };

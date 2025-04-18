@@ -1,8 +1,6 @@
 import express from "express";
-import { verifyToken } from "../middleware/auth-middleware";
+import { verifyTokenMahasiswa } from "../middleware/auth-middleware.js";
 
 const mahasiswaRoute = express.Router();
-
-mahasiswaRoute.post("/mahasiswa/login", verifyToken);
 
 export default mahasiswaRoute;

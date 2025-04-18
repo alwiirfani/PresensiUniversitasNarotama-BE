@@ -21,9 +21,7 @@ const createFakultas = async (request) => {
   try {
     // TODO cek apakah fakultas sudah ada
     const fakultas = await prisma.fakultas.findFirst({
-      where: {
-        nama: createFakultasRequest.nama,
-      },
+      where: { nama: createFakultasRequest.nama },
     });
 
     // TODO throw error jika fakultas sudah ada
@@ -51,9 +49,7 @@ const updateFakultas = async (request) => {
 
   // TODO cek apakah fakultas sudah ada
   const fakultas = await prisma.fakultas.findUnique({
-    where: {
-      id: updateFakultasRequest.id,
-    },
+    where: { id: updateFakultasRequest.id },
   });
 
   // TODO throw error jika fakultas tidak ada
@@ -61,9 +57,7 @@ const updateFakultas = async (request) => {
 
   // TODO update fakultas
   const fakultasUpdated = await prisma.fakultas.update({
-    where: {
-      id: updateFakultasRequest.id,
-    },
+    where: { id: updateFakultasRequest.id },
     data: {
       nama: updateFakultasRequest.nama,
       dekan: updateFakultasRequest.dekan,
@@ -83,12 +77,8 @@ const findFakultasById = async (fakultasId) => {
   try {
     // TODO cek apakah fakultas sudah ada
     const fakultas = await prisma.fakultas.findUnique({
-      where: {
-        id: fakultasId,
-      },
-      include: {
-        prodi: true,
-      },
+      where: { id: fakultasId },
+      include: { prodi: true },
     });
 
     // TODO throw error jika fakultas tidak ada
@@ -109,9 +99,7 @@ const findFakultasByName = async (fakultasName) => {
   try {
     // TODO cek apakah fakultas sudah ada
     const fakultas = await prisma.fakultas.findFirst({
-      where: {
-        nama: fakultasName,
-      },
+      where: { nama: fakultasName },
     });
 
     // TODO throw error jika fakultas tidak ada
@@ -179,9 +167,7 @@ const deleteFakultas = async (fakultasId) => {
   try {
     // TODO cek apakah fakultas sudah ada
     const fakultas = await prisma.fakultas.findUnique({
-      where: {
-        id: fakultasId,
-      },
+      where: { id: fakultasId },
     });
 
     // TODO throw error jika fakultas tidak ada
@@ -189,14 +175,10 @@ const deleteFakultas = async (fakultasId) => {
 
     // TODO delete fakultas
     await prisma.fakultas.delete({
-      where: {
-        id: fakultasId,
-      },
+      where: { id: fakultasId },
     });
 
-    return {
-      name: fakultas.nama,
-    };
+    return { name: fakultas.nama };
   } catch (error) {
     throw new ResponseError(error.status, error.message);
   }

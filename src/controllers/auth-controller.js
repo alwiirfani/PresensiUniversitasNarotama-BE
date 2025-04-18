@@ -28,6 +28,7 @@ const loginAdmin = async (req, res, next) => {
       maxAge: 24 * 60 * 60 * 1000, // 1 day
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict", // Lakukan pengecekan CSRF
+      path: "/",
     });
 
     // TODO kirim response
@@ -69,6 +70,8 @@ const loginMahasiswa = async (req, res, next) => {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 1 day
       secure: process.env.NODE_ENV === "production",
+      sameSite: "strict", // Lakukan pengecekan CSRF
+      path: "/",
     });
 
     // TODO kirim response
@@ -95,6 +98,15 @@ const refreshToken = async (req, res, next) => {
       data: response,
     });
   } catch (error) {
+    // TODO handle error expired token
+    if (error.message.includes("Refresh token expired")) {
+      res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+      });
+    }
     const status = error.status || 500;
     next(res.status(status).json({ status: status, message: error.message }));
   }
@@ -105,8 +117,13 @@ const logout = async (req, res, next) => {
     // TODO panggil service
     await authService.logout(req.cookies.refreshToken);
 
-    // hapus cookie
-    res.clearCookie("refreshToken");
+    // TODO hapus cookie
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict", // Lakukan pengecekan CSRF
+      path: "/",
+    });
 
     // TODO kirim response
     res.status(200).json({
@@ -118,6 +135,7 @@ const logout = async (req, res, next) => {
     next(res.status(status).json({ status: status, message: error.message }));
   }
 };
+
 export default {
   registerAdmin,
   loginAdmin,
