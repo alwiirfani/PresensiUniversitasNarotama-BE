@@ -2,19 +2,7 @@
 CREATE TYPE "StatusPresensi" AS ENUM ('HADIR', 'IZIN', 'ALPHA');
 
 -- CreateEnum
-CREATE TYPE "ScanStatus" AS ENUM ('SUCCESS', 'FAILED_EXPIRED', 'FAILED_INVALID', 'FAILED_OTHER');
-
--- CreateTable
-CREATE TABLE "Admin" (
-    "id" TEXT NOT NULL,
-    "username" VARCHAR(255) NOT NULL,
-    "password" TEXT NOT NULL,
-    "refreshToken" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "Admin_pkey" PRIMARY KEY ("id")
-);
+CREATE TYPE "ScanStatus" AS ENUM ('SUCCESS', 'FAILED_EXPIRED', 'FAILED_INVALID');
 
 -- CreateTable
 CREATE TABLE "Fakultas" (
@@ -40,6 +28,18 @@ CREATE TABLE "Prodi" (
 );
 
 -- CreateTable
+CREATE TABLE "Admin" (
+    "id" VARCHAR(255) NOT NULL,
+    "username" VARCHAR(255) NOT NULL,
+    "password" VARCHAR(255) NOT NULL,
+    "refreshToken" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Admin_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Mahasiswa" (
     "nim" CHAR(8) NOT NULL,
     "nama" VARCHAR(255) NOT NULL,
@@ -58,7 +58,7 @@ CREATE TABLE "Mahasiswa" (
 CREATE TABLE "Dosen" (
     "nip" CHAR(5) NOT NULL,
     "nama" VARCHAR(255) NOT NULL,
-    "email" TEXT NOT NULL,
+    "email" VARCHAR(255) NOT NULL,
     "password" VARCHAR(255) NOT NULL,
     "alamat" VARCHAR(255) NOT NULL,
     "refreshToken" TEXT,
@@ -186,9 +186,6 @@ CREATE TABLE "MahasiswaQRCode" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Admin_username_key" ON "Admin"("username");
-
--- CreateIndex
 CREATE INDEX "Fakultas_nama_idx" ON "Fakultas"("nama");
 
 -- CreateIndex
@@ -196,6 +193,12 @@ CREATE UNIQUE INDEX "Prodi_kode_key" ON "Prodi"("kode");
 
 -- CreateIndex
 CREATE INDEX "Prodi_nama_kode_idx" ON "Prodi"("nama", "kode");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Admin_username_key" ON "Admin"("username");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Mahasiswa_email_key" ON "Mahasiswa"("email");
 
 -- CreateIndex
 CREATE INDEX "Mahasiswa_nim_email_idx" ON "Mahasiswa"("nim", "email");

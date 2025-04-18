@@ -17,5 +17,6 @@ publicRoute.get("/api/v1/fakultas", fakultasController.findAllFakultas);
 
 // PRODI
 publicRoute.get("/api/v1/prodi/:id", prodiController.findProdiById);
+publicRoute.get("/api/v1/prodi", prodiController.findAllProdi);
 
 export { publicRoute };

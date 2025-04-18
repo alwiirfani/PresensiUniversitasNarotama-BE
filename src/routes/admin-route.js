@@ -32,5 +32,6 @@ adminRoute.delete(
 
 // PRODI
 adminRoute.post("/api/v1/prodi", verifyTokenAdmin, prodiController.createProdi);
+adminRoute.put("/api/v1/prodi", verifyTokenAdmin, prodiController.updateProdi);
 
 export { adminRoute };

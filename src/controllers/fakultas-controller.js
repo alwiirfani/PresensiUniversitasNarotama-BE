@@ -42,7 +42,7 @@ const findFakultasById = async (req, res, next) => {
     // TODO kirim response
     res.status(200).json({
       status: 200,
-      message: "FInd Fakultas by Id successfully",
+      message: "Find Fakultas by Id successfully",
       data: response,
     });
   } catch (error) {

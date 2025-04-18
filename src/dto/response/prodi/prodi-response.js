@@ -8,6 +8,17 @@ const createProdiResponse = (createProdi) => {
   };
 };
 
+const updateProdiResponse = (updateProdi) => {
+  return {
+    id: updateProdi.id,
+    nama: updateProdi.nama,
+    kode: updateProdi.kode,
+    fakultas: updateProdi.fakultas.nama,
+    createdAt: updateProdi.createdAt,
+    updatedAt: updateProdi.updatedAt,
+  };
+};
+
 const findProdiByIdResponse = (findProdi) => {
   return {
     id: findProdi.id,
@@ -19,4 +30,4 @@ const findProdiByIdResponse = (findProdi) => {
   };
 };
 
-export { createProdiResponse, findProdiByIdResponse };
+export { createProdiResponse, updateProdiResponse, findProdiByIdResponse };
