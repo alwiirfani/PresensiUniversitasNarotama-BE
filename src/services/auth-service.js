@@ -175,6 +175,7 @@ const registerDosen = async (request) => {
         alamat: registerDosenRequest.alamat,
         createdAt: new Date(),
       },
+      include: { prodi: true },
     });
 
     return registerDosenResponse(newDosen);
