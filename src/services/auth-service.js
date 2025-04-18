@@ -154,7 +154,7 @@ const registerDosen = async (request) => {
       );
 
     // TODO cek apakah nip sudah terdaftar
-    const dosenExist = await prisma.dosen.findFirst({
+    const dosenExist = await prisma.dosen.findUnique({
       where: { nip: registerDosenRequest.nip, prodiId: prodi.id },
     });
 
@@ -190,8 +190,9 @@ const loginDosen = async (request) => {
 
   try {
     // TODO cek dosen
-    const dosen = await prisma.dosen.findFirst({
-      where: { nama: loginDosenRequest.nama },
+    const dosen = await prisma.dosen.findUnique({
+      where: { nip: loginDosenRequest.nip },
+      include: { prodi: true },
     });
 
     // TODO cek apakah dosen sudah terdaftar throw error
@@ -202,13 +203,13 @@ const loginDosen = async (request) => {
       );
 
     // TODO cek password
-    const isPasswordMatch = await bcrypt.compare(
+    const isPasswordValid = await bcrypt.compare(
       loginDosenRequest.password,
       dosen.password
     );
 
     // TODO throw error jika password salah
-    if (!isPasswordMatch) throw new ResponseError(400, "Password is incorrect");
+    if (!isPasswordValid) throw new ResponseError(400, "Password is incorrect");
 
     // TODO cek apakah refresh token sudah expired (untuk user lama)
     if (dosen.refreshToken) {
