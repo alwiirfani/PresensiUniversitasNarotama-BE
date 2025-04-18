@@ -1,11 +1,14 @@
 import {
   loginAdminSchemaRequest,
+  loginDosenSchemaRequest,
   loginMahasiswaSchemaRequest,
   registerAdminSchemaRequest,
+  registerDosenSchemaRequest,
   registerMahasiswaSchemaRequest,
 } from "../dto/request/authentication/auth-request.js";
 import {
   registerAdminResponse,
+  registerDosenResponse,
   registerMahasiswaResponse,
 } from "../dto/response/authentication/auth-response.js";
 import "dotenv/config";
@@ -124,6 +127,124 @@ const loginAdmin = async (request) => {
       id: admin.id,
       username: admin.username,
       role: "admin",
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    };
+  } catch (error) {
+    throw new ResponseError(error.status, error.message);
+  }
+};
+
+// TODO register dosen
+const registerDosen = async (request) => {
+  // TODO validasi request
+  const registerDosenRequest = validate(registerDosenSchemaRequest, request);
+
+  try {
+    // TODO cek password dan confirm password
+    if (registerDosenRequest.password !== registerDosenRequest.confirmPassword)
+      throw new ResponseError(
+        400,
+        "Password and confirm password must be same"
+      );
+
+    // TODO cek apakah nip sudah terdaftar
+    const dosenExist = await prisma.dosen.findFirst({
+      where: { nama: registerDosenRequest.nama },
+    });
+
+    // TODO throw error jika nip sudah terdaftar
+    if (dosenExist) throw new ResponseError(400, "Dosen already exist");
+
+    // TODO hash password
+    const hashedPassword = await bcrypt.hash(registerDosenRequest.password, 10);
+
+    // TODO buat dosen
+    const newDosen = await prisma.dosen.create({
+      data: {
+        nip: registerDosenRequest.nip,
+        nama: registerDosenRequest.nama,
+        namaProdi: registerDosenRequest.namaProdi,
+        email: registerDosenRequest.email,
+        password: hashedPassword,
+        alamat: registerDosenRequest.alamat,
+        createdAt: new Date(),
+      },
+    });
+
+    return registerDosenResponse(newDosen);
+  } catch (error) {
+    throw new ResponseError(error.status, error.message);
+  }
+};
+
+// TODO login dosen
+const loginDosen = async (request) => {
+  // TODO validasi request
+  const loginDosenRequest = validate(loginDosenSchemaRequest, request);
+
+  try {
+    // TODO cek dosen
+    const dosen = await prisma.dosen.findFirst({
+      where: { nama: loginDosenRequest.nama },
+    });
+
+    // TODO cek apakah dosen sudah terdaftar throw error
+    if (!dosen)
+      throw new ResponseError(
+        404,
+        `Dosen with name ${loginDosenRequest.nama} not found`
+      );
+
+    // TODO cek password
+    const isPasswordMatch = await bcrypt.compare(
+      loginDosenRequest.password,
+      dosen.password
+    );
+
+    // TODO throw error jika password salah
+    if (!isPasswordMatch) throw new ResponseError(400, "Password is incorrect");
+
+    // TODO cek apakah refresh token sudah expired (untuk user lama)
+    if (dosen.refreshToken) {
+      try {
+        jwt.verify(dosen.refreshToken, process.env.JWT_REFRESH_SECRET);
+      } catch (error) {
+        // TODO jika refresh token sudah expired
+        if (error.name === "TokenExpiredError") {
+          // TODO update refresh token
+          await prisma.dosen.update({
+            data: { refreshToken: null, updatedAt: new Date() },
+            where: { id: dosen.id },
+          });
+        }
+      }
+    }
+
+    // TODO buat access token
+    const accessToken = jwt.sign(
+      { nip: dosen.nip, nama: dosen.nama, role: "dosen" },
+      process.env.JWT_SECRET,
+      { algorithm: "HS256", expiresIn: "1m", subject: dosen.email }
+    );
+
+    // TODO buat refresh token
+    const refreshToken = jwt.sign(
+      { nip: dosen.nip, nama: dosen.nama, role: "dosen" },
+      process.env.JWT_REFRESH_SECRET,
+      { algorithm: "HS256", expiresIn: "1d", subject: dosen.email }
+    );
+
+    // TODO update dosen
+    await prisma.dosen.update({
+      data: { refreshToken: refreshToken, updatedAt: new Date() },
+      where: { id: dosen.id },
+    });
+
+    return {
+      nip: dosen.nip,
+      nama: dosen.nama,
+      role: "dosen",
       accessToken: accessToken,
       refreshToken: refreshToken,
     };
@@ -434,6 +555,8 @@ const logout = async (refreshToken) => {
 export default {
   registerAdmin,
   loginAdmin,
+  registerDosen,
+  loginDosen,
   registerMahasiswa,
   loginMahasiswa,
   refreshToken,

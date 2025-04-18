@@ -8,6 +8,7 @@ const publicRoute = express.Router();
 // AUTHENTICATION
 publicRoute.post("/api/v1/auth/admin-register", authController.registerAdmin);
 publicRoute.post("/api/v1/auth/admin-login", authController.loginAdmin);
+publicRoute.post("/api/v1/auth/dosen-login", authController.loginDosen);
 publicRoute.post("/api/v1/auth/mahasiswa-login", authController.loginMahasiswa);
 publicRoute.get("/api/v1/auth/refresh-token", authController.refreshToken);
 

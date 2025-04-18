@@ -16,4 +16,19 @@ const registerMahasiswaResponse = (registerMahasiswa) => {
   };
 };
 
-export { registerAdminResponse, registerMahasiswaResponse };
+const registerDosenResponse = (registerDosen) => {
+  return {
+    nip: registerDosen.nip,
+    nama: registerDosen.nama,
+    prodi: registerDosen.prodi.nama,
+    email: registerDosen.email,
+    alamat: registerDosen.alamat,
+    createdAt: registerDosen.createdAt,
+  };
+};
+
+export {
+  registerAdminResponse,
+  registerMahasiswaResponse,
+  registerDosenResponse,
+};

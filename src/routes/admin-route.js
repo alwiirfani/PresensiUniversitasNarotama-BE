@@ -12,6 +12,11 @@ adminRoute.post(
   verifyTokenAdmin,
   authController.registerMahasiswa
 );
+adminRoute.post(
+  "/api/v1/auth/dosen-register",
+  verifyTokenAdmin,
+  authController.registerDosen
+);
 
 // FAKULTAS
 adminRoute.post(

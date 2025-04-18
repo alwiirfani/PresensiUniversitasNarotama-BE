@@ -43,6 +43,49 @@ const loginAdmin = async (req, res, next) => {
   }
 };
 
+const registerDosen = async (req, res, next) => {
+  try {
+    // TODO panggil service
+    const response = await authService.registerDosen(req.body);
+
+    // TODO kirim response
+    res.status(201).json({
+      status: 201,
+      message: "Dosen created successfully",
+      data: response,
+    });
+  } catch (error) {
+    const status = error.status || 500;
+    next(res.status(status).json({ status: status, message: error.message }));
+  }
+};
+
+const loginDosen = async (req, res, next) => {
+  try {
+    // TODO panggil service
+    const response = await authService.loginDosen(req.body);
+
+    // TODO response cookie
+    res.cookie("refreshToken", response.refreshToken, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict", // Lakukan pengecekan CSRF
+      path: "/",
+    });
+
+    // TODO kirim response
+    res.status(200).json({
+      status: 200,
+      message: "Dosen logged in successfully",
+      data: response,
+    });
+  } catch (error) {
+    const status = error.status || 500;
+    next(res.status(status).json({ status: status, message: error.message }));
+  }
+};
+
 const registerMahasiswa = async (req, res, next) => {
   try {
     // TODO panggil service
@@ -139,6 +182,8 @@ const logout = async (req, res, next) => {
 export default {
   registerAdmin,
   loginAdmin,
+  registerDosen,
+  loginDosen,
   registerMahasiswa,
   loginMahasiswa,
   refreshToken,
