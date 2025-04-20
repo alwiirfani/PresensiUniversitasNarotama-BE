@@ -245,7 +245,7 @@ const loginDosen = async (request) => {
     // TODO update dosen
     await prisma.dosen.update({
       data: { refreshToken: refreshToken, updatedAt: new Date() },
-      where: { id: dosen.id },
+      where: { nip: dosen.nip },
     });
 
     return {
