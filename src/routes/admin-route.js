@@ -1,8 +1,10 @@
 import express from "express";
+import { verifyTokenAdmin } from "../middleware/auth-middleware.js";
 import fakultasController from "../controllers/fakultas-controller.js";
 import prodiController from "../controllers/prodi-controller.js";
-import { verifyTokenAdmin } from "../middleware/auth-middleware.js";
 import authController from "../controllers/auth-controller.js";
+import dosenController from "../controllers/dosen-controller.js";
+import mahasiswaController from "../controllers/mahasiswa-controller.js";
 
 const adminRoute = express.Router();
 
@@ -42,6 +44,20 @@ adminRoute.delete(
   "/api/v1/prodi/:id",
   verifyTokenAdmin,
   prodiController.deleteProdi
+);
+
+// DOSEN
+adminRoute.put(
+  "/api/v1/dosen/:dosenNip",
+  verifyTokenAdmin,
+  dosenController.updateDosenForAdmin
+);
+
+// MAHASISWA
+adminRoute.put(
+  "/api/v1/mahasiswa/:mahasiswaNim",
+  verifyTokenAdmin,
+  mahasiswaController.updateMahasiswaForAdmin
 );
 
 export { adminRoute };

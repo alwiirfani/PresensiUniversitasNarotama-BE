@@ -222,7 +222,7 @@ const loginDosen = async (request) => {
           // TODO update refresh token
           await prisma.dosen.update({
             data: { refreshToken: null, updatedAt: new Date() },
-            where: { id: dosen.id },
+            where: { nip: dosen.nip },
           });
         }
       }
@@ -429,7 +429,7 @@ const refreshToken = async (request) => {
     }
 
     if (decode.role === "dosen") {
-      const dosen = await prisma.dosen.findFirst({
+      const dosen = await prisma.dosen.findUnique({
         where: { nip: decode.nip },
       });
 
@@ -448,7 +448,7 @@ const refreshToken = async (request) => {
     }
 
     if (decode.role === "mahasiswa") {
-      const mahasiswa = await prisma.mahasiswa.findFirst({
+      const mahasiswa = await prisma.mahasiswa.findUnique({
         where: { nim: decode.nim },
       });
 

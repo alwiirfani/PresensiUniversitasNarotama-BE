@@ -1,18 +1,15 @@
-import mahasiswaService from "../services/mahasiswa-service.js";
+import dosenService from "../services/dosen-service.js";
 
-const updateMahasiswaForAdmin = async (req, res, next) => {
+const updateDosenForAdmin = async (req, res, next) => {
   try {
     // TODO panggil service
-    const { mahasiswaNim } = req.params;
-    const response = await mahasiswaService.updateMahasiswaForAdmin(
-      mahasiswaNim,
-      req.body
-    );
+    const { dosenNip } = req.params;
+    const response = await dosenService.updateDosenForAdmin(dosenNip, req.body);
 
     // TODO kirim response
     res.status(200).json({
       status: 200,
-      message: "Mahasiswa updated successfully",
+      message: "Dosen updated successfully",
       data: response,
     });
   } catch (error) {
@@ -21,15 +18,15 @@ const updateMahasiswaForAdmin = async (req, res, next) => {
   }
 };
 
-const updateMahasiswa = async (req, res, next) => {
+const updateDosen = async (req, res, next) => {
   try {
     // TODO panggil service
-    const response = await mahasiswaService.updateMahasiswa(req.body);
+    const response = await dosenService.updateDosen(req.body);
 
     // TODO kirim response
     res.status(200).json({
       status: 200,
-      message: "Mahasiswa updated successfully",
+      message: "Dosen updated successfully",
       data: response,
     });
   } catch (error) {
@@ -38,17 +35,15 @@ const updateMahasiswa = async (req, res, next) => {
   }
 };
 
-const findMahasiswaByNim = async (req, res, next) => {
+const findDosenByNip = async (req, res, next) => {
   try {
     // TODO panggil service
-    const response = await mahasiswaService.findMahasiswaByNim(
-      req.params.mahasiswaNim
-    );
+    const response = await dosenService.findDosenByNip(req.params.dosenNip);
 
     // TODO kirim response
     res.status(200).json({
       status: 200,
-      message: "Find Mahasiswa by NIM successfully",
+      message: "Find Dosen by NIM successfully",
       data: response,
     });
   } catch (error) {
@@ -58,7 +53,7 @@ const findMahasiswaByNim = async (req, res, next) => {
 };
 
 export default {
-  updateMahasiswaForAdmin,
-  updateMahasiswa,
-  findMahasiswaByNim,
+  updateDosenForAdmin,
+  updateDosen,
+  findDosenByNip,
 };
