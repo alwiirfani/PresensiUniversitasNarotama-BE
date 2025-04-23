@@ -10,7 +10,15 @@ import { dosenRoute } from "./routes/dosen-route.js";
 import { mahasiswaRoute } from "./routes/mahasiswa-route.js";
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173"], // frontend url
+    credentials: true, // send cookies or jwt
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // allowed methods
+    allowedHeaders: ["Content-Type", "Authorization"], // allowed headers in request
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

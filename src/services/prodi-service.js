@@ -2,14 +2,14 @@ import {
   createProdiSchemaRequest,
   updateProdiSchemaRequest,
 } from "../dto/request/prodi/prodi-request.js";
-import prisma from "../configs/db/prisma.js";
-import { validate } from "../utils/validation-util.js";
-import fakultasService from "./fakultas-service.js";
 import {
   createProdiResponse,
   findProdiByIdResponse,
   updateProdiResponse,
 } from "../dto/response/prodi/prodi-response.js";
+import prisma from "../configs/db/prisma.js";
+import { validate } from "../utils/validation-util.js";
+import fakultasService from "./fakultas-service.js";
 import ResponseError from "../errors/response-error.js";
 import { v4 as uuid } from "uuid";
 import { Prisma } from "@prisma/client";

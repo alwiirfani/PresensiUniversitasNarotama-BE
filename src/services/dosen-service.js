@@ -118,7 +118,7 @@ const findDosenByNip = async (dosenNip) => {
 
 const findAllDosen = async ({ namaProdi, page = 1, pageSize = 10 }) => {};
 
-const deleteDosen = async (dosenId) => {};
+const deleteDosen = async (dosenNip) => {};
 
 export default {
   updateDosenForAdmin,
