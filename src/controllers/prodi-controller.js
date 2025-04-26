@@ -87,7 +87,7 @@ const deleteProdi = async (req, res, next) => {
     // TODO kirim response
     res.status(200).json({
       status: 200,
-      message: `Prodi ${response.name} deleted successfully`,
+      message: `Prodi ${response.nama} deleted successfully`,
     });
   } catch (error) {
     const status = error.status || 500;

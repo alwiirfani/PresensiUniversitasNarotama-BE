@@ -196,7 +196,7 @@ const deleteProdi = async (prodiId) => {
     });
 
     return {
-      name: prodi.nama,
+      nama: prodi.nama,
     };
   } catch (error) {
     throw new ResponseError(error.status, error.message);

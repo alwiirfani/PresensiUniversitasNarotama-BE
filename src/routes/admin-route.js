@@ -47,17 +47,33 @@ adminRoute.delete(
 );
 
 // DOSEN
+adminRoute.get("/api/v1/dosen", verifyTokenAdmin, dosenController.findAllDosen);
 adminRoute.put(
   "/api/v1/dosen/:dosenNip",
   verifyTokenAdmin,
   dosenController.updateDosenForAdmin
 );
+adminRoute.delete(
+  "/api/v1/dosen/:dosenNip",
+  verifyTokenAdmin,
+  dosenController.deleteDosen
+);
 
 // MAHASISWA
+adminRoute.get(
+  "/api/v1/mahasiswa",
+  verifyTokenAdmin,
+  mahasiswaController.findAllMahasiswa
+);
 adminRoute.put(
   "/api/v1/mahasiswa/:mahasiswaNim",
   verifyTokenAdmin,
   mahasiswaController.updateMahasiswaForAdmin
+);
+adminRoute.delete(
+  "/api/v1/mahasiswa/:mahasiswaNim",
+  verifyTokenAdmin,
+  mahasiswaController.deleteMahasiswa
 );
 
 export { adminRoute };

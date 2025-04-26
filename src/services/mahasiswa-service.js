@@ -10,6 +10,7 @@ import { validate } from "../utils/validation-util.js";
 import prisma from "../configs/db/prisma.js";
 import ResponseError from "../errors/response-error.js";
 import bcrypt from "bcrypt";
+import { Prisma } from "@prisma/client";
 
 // TODO update mahasiswa for admin
 const updateMahasiswaForAdmin = async (mahasiswaNim, request) => {
@@ -120,14 +121,73 @@ const findMahasiswaByNim = async (mahasiswaNim) => {
   }
 };
 
-const findAllMahasasiswa = async ({ namaProdi, page = 1, pageSize = 10 }) => {};
+const findAllMahasiswa = async ({ namaProdi, page = 1, pageSize = 10 }) => {
+  if (isNaN(page) || isNaN(pageSize) || page < 1 || pageSize < 1)
+    throw new ResponseError(400, "Invalid pagination parameters");
 
-const deleteMahasiswa = async (mahasiswaNim) => {};
+  const where = {};
+  if (namaProdi)
+    where.prodi = { nama: { contains: namaProdi, mode: "insensitive" } };
+
+  try {
+    const [mahasiswaList, totalItems] = await Promise.all([
+      prisma.mahasiswa.findMany({
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        where,
+        include: { prodi: true },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.mahasiswa.count({ where }),
+    ]);
+
+    // total halaman
+    const totalPages = Math.ceil(totalItems / pageSize);
+
+    return {
+      data: mahasiswaList,
+      pagination: {
+        page: page,
+        pageSize: pageSize,
+        totalItems: totalItems,
+        totalPages: totalPages,
+      },
+    };
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError)
+      throw new ResponseError(500, error.message);
+
+    throw new ResponseError(error.status, error.message);
+  }
+};
+
+const deleteMahasiswa = async (mahasiswaNim) => {
+  // TODO cek mahasiswaNim ada dan tipe data string
+  if (!mahasiswaNim || typeof mahasiswaNim !== "string")
+    throw new ResponseError(400, "Mahasiswa NIM is not valid");
+
+  try {
+    // TODO cek apakah mahasiswa sudah ada
+    const mahasiswa = await prisma.mahasiswa.findUnique({
+      where: { nim: mahasiswaNim },
+    });
+
+    // TODO throw error jika mahasiswa tidak ada
+    if (!mahasiswa) throw new ResponseError(404, "Mahasiswa not found");
+
+    // TODO delete mahasiswa
+    await prisma.mahasiswa.delete({ where: { nim: mahasiswaNim } });
+
+    return { nama: mahasiswa.nama };
+  } catch (error) {
+    throw new ResponseError(error.status, error.message);
+  }
+};
 
 export default {
   updateMahasiswaForAdmin,
   updateMahasiswa,
   findMahasiswaByNim,
-  findAllMahasasiswa,
+  findAllMahasiswa,
   deleteMahasiswa,
 };

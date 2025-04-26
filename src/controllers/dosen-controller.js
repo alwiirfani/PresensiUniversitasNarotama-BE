@@ -52,8 +52,52 @@ const findDosenByNip = async (req, res, next) => {
   }
 };
 
+const findAllDosen = async (req, res, next) => {
+  try {
+    // TODO validate request
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+    const { namaProdi } = req.query;
+
+    // TODO panggil service
+    const response = await dosenService.findAllDosen({
+      namaProdi,
+      page,
+      pageSize,
+    });
+
+    // TODO kirim response
+    res.status(200).json({
+      status: 200,
+      message: "Find All Dosen successfully",
+      data: response,
+    });
+  } catch (error) {
+    const status = error.status || 500;
+    next(res.status(status).json({ status: status, message: error.message }));
+  }
+};
+
+const deleteDosen = async (req, res, next) => {
+  try {
+    // TODO panggil service
+    const response = await dosenService.deleteDosen(req.params.dosenNip);
+
+    // TODO kirim response
+    res.status(200).json({
+      status: 200,
+      message: `Dosen ${response.nama} deleted successfully`,
+    });
+  } catch (error) {
+    const status = error.status || 500;
+    next(res.status(status).json({ status: status, message: error.message }));
+  }
+};
+
 export default {
   updateDosenForAdmin,
   updateDosen,
   findDosenByNip,
+  findAllDosen,
+  deleteDosen,
 };

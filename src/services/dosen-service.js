@@ -10,6 +10,7 @@ import { validate } from "../utils/validation-util.js";
 import prisma from "../configs/db/prisma.js";
 import ResponseError from "../errors/response-error.js";
 import bcrypt from "bcrypt";
+import { Prisma } from "@prisma/client";
 
 // TODO update dosen for admin
 const updateDosenForAdmin = async (dosenNip, request) => {
@@ -116,9 +117,68 @@ const findDosenByNip = async (dosenNip) => {
   }
 };
 
-const findAllDosen = async ({ namaProdi, page = 1, pageSize = 10 }) => {};
+const findAllDosen = async ({ namaProdi, page = 1, pageSize = 10 }) => {
+  if (isNaN(page) || isNaN(pageSize) || page < 1 || pageSize < 1)
+    throw new ResponseError(400, "Invalid pagination parameters");
 
-const deleteDosen = async (dosenNip) => {};
+  const where = {};
+  if (namaProdi)
+    where.prodi = { nama: { contains: namaProdi, mode: "insensitive" } };
+
+  try {
+    const [dosenList, totalItems] = await Promise.all([
+      prisma.dosen.findMany({
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        where,
+        include: { prodi: true },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.dosen.count({ where }),
+    ]);
+
+    // total halaman
+    const totalPages = Math.ceil(totalItems / pageSize);
+
+    return {
+      data: dosenList,
+      pagination: {
+        page: page,
+        pageSize: pageSize,
+        totalItems: totalItems,
+        totalPages: totalPages,
+      },
+    };
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      throw new ResponseError(500, error.message);
+    }
+    throw new ResponseError(error.status, error.message);
+  }
+};
+
+const deleteDosen = async (dosenNip) => {
+  // TODO cek dosenNip ada dan tipe data string
+  if (!dosenNip || typeof dosenNip !== "string")
+    throw new ResponseError(400, "Dosen NIP is not valid");
+
+  try {
+    // TODO cek apakah dosen sudah ada
+    const dosen = await prisma.dosen.findUnique({
+      where: { nip: dosenNip },
+    });
+
+    // TODO throw error jika dosen tidak ada
+    if (!dosen) throw new ResponseError(404, "Dosen not found");
+
+    // TODO delete dosen
+    await prisma.dosen.delete({ where: { nip: dosenNip } });
+
+    return { nama: dosen.nama };
+  } catch (error) {
+    throw new ResponseError(error.status, error.message);
+  }
+};
 
 export default {
   updateDosenForAdmin,

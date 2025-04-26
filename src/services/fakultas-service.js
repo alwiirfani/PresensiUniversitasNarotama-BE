@@ -178,7 +178,7 @@ const deleteFakultas = async (fakultasId) => {
       where: { id: fakultasId },
     });
 
-    return { name: fakultas.nama };
+    return { nama: fakultas.nama };
   } catch (error) {
     throw new ResponseError(error.status, error.message);
   }
