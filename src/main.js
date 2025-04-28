@@ -12,7 +12,7 @@ import { mahasiswaRoute } from "./routes/mahasiswa-route.js";
 const app = express();
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5500"], // frontend url
+    origin: ["http://localhost:5173", "http://127.0.0.1:5500"], // frontend url
     credentials: true, // send cookies or jwt
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // allowed methods
     allowedHeaders: ["Content-Type", "Authorization"], // allowed headers in request
