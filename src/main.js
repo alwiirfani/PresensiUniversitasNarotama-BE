@@ -1,8 +1,8 @@
 import express from "express";
 import "dotenv/config";
 import cors from "cors";
-import { logger, loggerInfo } from "./configs/logger.js";
 import cookieParser from "cookie-parser";
+import { logger, loggerInfo } from "./configs/logger.js";
 import { adminRoute } from "./routes/admin-route.js";
 import { publicRoute } from "./routes/public-route.js";
 import { verifyRoute } from "./routes/verify-route.js";
@@ -12,7 +12,7 @@ import { mahasiswaRoute } from "./routes/mahasiswa-route.js";
 const app = express();
 app.use(
   cors({
-    origin: ["http://localhost:5173"], // frontend url
+    origin: ["http://localhost:5173", "http://localhost:5500"], // frontend url
     credentials: true, // send cookies or jwt
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // allowed methods
     allowedHeaders: ["Content-Type", "Authorization"], // allowed headers in request

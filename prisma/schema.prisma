@@ -128,7 +128,7 @@ model MataKuliah {
 // Entitas Presensi
 model Presensi {
   id                 String           @id @default(uuid()) @db.VarChar(255)
-  mahasiswaNim       String           @db.Char(7)
+  mahasiswaNim       String           @db.Char(8)
   jadwalMataKuliahId String           @db.VarChar(255)
   tanggal            DateTime
   scanTime           DateTime         @default(now())
@@ -172,7 +172,7 @@ model JadwalMataKuliah {
 // Entitas Perantara antara Mahasiswa dan Jadwal
 model MahasiswaJadwal {
   id                 String           @id @default(uuid()) @db.VarChar(255)
-  mahasiswaNim       String           @db.Char(7)
+  mahasiswaNim       String           @db.Char(8)
   mahasiswa          Mahasiswa        @relation(fields: [mahasiswaNim], references: [nim])
   jadwalMataKuliahId String           @db.VarChar(255)
   jadwalMataKuliah   JadwalMataKuliah @relation(fields: [jadwalMataKuliahId], references: [id])
@@ -185,8 +185,8 @@ model MahasiswaJadwal {
 // Entitas Perantara antara Dosen dan Mahasiswa
 model DosenMahasiswa {
   id           String    @id @default(uuid()) @db.VarChar(255)
-  dosenNip     String    @db.Char(7)
-  mahasiswaNim String    @db.Char(7)
+  dosenNip     String    @db.Char(8)
+  mahasiswaNim String    @db.Char(5)
   dosen        Dosen     @relation(fields: [dosenNip], references: [nip])
   mahasiswa    Mahasiswa @relation(fields: [mahasiswaNim], references: [nim])
   createdAt    DateTime  @default(now())
@@ -198,7 +198,7 @@ model DosenMahasiswa {
 // Entitas perantara antara Mahasiswa dan Mata Kuliah
 model MahasiswaMataKuliah {
   id             String     @id @default(uuid()) @db.VarChar(255)
-  mahasiswaNim   String     @db.Char(7)
+  mahasiswaNim   String     @db.Char(8)
   mataKuliahKode String     @db.Char(5)
   mahasiswa      Mahasiswa  @relation(fields: [mahasiswaNim], references: [nim])
   mataKuliah     MataKuliah @relation(fields: [mataKuliahKode], references: [kode])
@@ -212,7 +212,7 @@ model MahasiswaMataKuliah {
 // Entitas perantara antara Dosen dan Mata Kuliah
 model DosenMataKuliah {
   id             String     @id @default(uuid()) @db.VarChar(255)
-  dosenNip       String     @db.Char(7)
+  dosenNip       String     @db.Char(5)
   mataKuliahKode String     @db.Char(5)
   dosen          Dosen      @relation(fields: [dosenNip], references: [nip])
   mataKuliah     MataKuliah @relation(fields: [mataKuliahKode], references: [kode])
@@ -227,7 +227,7 @@ model DosenMataKuliah {
 // Entitas untuk Log Scan Gagal (Baru)
 model ScanLog {
   id                 String            @id @default(uuid())
-  mahasiswaNim       String?           @db.Char(7)
+  mahasiswaNim       String?           @db.Char(8)
   jadwalMataKuliahId String?
   jadwalMataKuliah   JadwalMataKuliah? @relation(fields: [jadwalMataKuliahId], references: [id])
   scannedByDosenNip  String?
