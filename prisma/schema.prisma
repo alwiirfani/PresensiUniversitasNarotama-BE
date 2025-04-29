@@ -41,7 +41,7 @@ model Fakultas {
 
 // Entitas Program Studi
 model Prodi {
-  id         String       @id @default(uuid())
+  id         String       @id @default(uuid()) @db.VarChar(255)
   nama       String       @db.VarChar(255)
   kode       String       @unique @db.Char(3)
   fakultasId String       @db.VarChar(255)
@@ -83,7 +83,6 @@ model Mahasiswa {
   Presensi            Presensi[]
   MahasiswaQRCode     MahasiswaQRCode[]
 
-  @@unique([prodiId])
   @@index([nim, email])
 }
 
@@ -105,7 +104,6 @@ model Dosen {
   verifiedPresensi Presensi[]         @relation("VerifiedPresensi")
   ScanLog          ScanLog[]
 
-  @@unique([prodiId])
   @@index([nip, email])
 }
 
@@ -140,7 +138,6 @@ model Presensi {
   verifiedByDosenNip String?
   verifiedByDosen    Dosen?           @relation(fields: [verifiedByDosenNip], references: [nip], name: "VerifiedPresensi")
 
-  @@unique([mahasiswaNim, jadwalMataKuliahId, tanggal])
   @@index([mahasiswaNim, jadwalMataKuliahId])
 }
 
@@ -165,7 +162,6 @@ model JadwalMataKuliah {
   ScanLog         ScanLog[]
   MahasiswaQRCode MahasiswaQRCode[]
 
-  @@unique([mataKuliahKode, hari, jamMulai, ruangan])
   @@index([mataKuliahKode, dosenNip, hari])
 }
 
@@ -178,7 +174,6 @@ model MahasiswaJadwal {
   jadwalMataKuliah   JadwalMataKuliah @relation(fields: [jadwalMataKuliahId], references: [id])
   createdAt          DateTime         @default(now())
 
-  @@unique([mahasiswaNim, jadwalMataKuliahId])
   @@index([mahasiswaNim, jadwalMataKuliahId])
 }
 
@@ -191,7 +186,6 @@ model DosenMahasiswa {
   mahasiswa    Mahasiswa @relation(fields: [mahasiswaNim], references: [nim])
   createdAt    DateTime  @default(now())
 
-  @@unique([dosenNip, mahasiswaNim])
   @@index([dosenNip, mahasiswaNim])
 }
 
@@ -205,7 +199,6 @@ model MahasiswaMataKuliah {
   semester       Int?
   createdAt      DateTime   @default(now())
 
-  @@unique([mahasiswaNim, mataKuliahKode])
   @@index([mahasiswaNim, mataKuliahKode])
 }
 
@@ -220,7 +213,6 @@ model DosenMataKuliah {
   semester       Int?
   createdAt      DateTime   @default(now())
 
-  @@unique([dosenNip, mataKuliahKode])
   @@index([dosenNip, mataKuliahKode])
 }
 
@@ -237,7 +229,6 @@ model ScanLog {
   status             ScanStatus
   errorMessage       String?           @db.VarChar(255)
 
-  @@unique([jadwalMataKuliahId])
   @@index([mahasiswaNim, jadwalMataKuliahId, scanTime])
 }
 

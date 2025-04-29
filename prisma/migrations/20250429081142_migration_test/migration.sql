@@ -17,7 +17,7 @@ CREATE TABLE "Fakultas" (
 
 -- CreateTable
 CREATE TABLE "Prodi" (
-    "id" TEXT NOT NULL,
+    "id" VARCHAR(255) NOT NULL,
     "nama" VARCHAR(255) NOT NULL,
     "kode" CHAR(3) NOT NULL,
     "fakultasId" VARCHAR(255) NOT NULL,
@@ -204,16 +204,10 @@ CREATE UNIQUE INDEX "Mahasiswa_email_key" ON "Mahasiswa"("email");
 CREATE INDEX "Mahasiswa_nim_email_idx" ON "Mahasiswa"("nim", "email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Mahasiswa_prodiId_key" ON "Mahasiswa"("prodiId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Dosen_email_key" ON "Dosen"("email");
 
 -- CreateIndex
 CREATE INDEX "Dosen_nip_email_idx" ON "Dosen"("nip", "email");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Dosen_prodiId_key" ON "Dosen"("prodiId");
 
 -- CreateIndex
 CREATE INDEX "MataKuliah_kode_nama_idx" ON "MataKuliah"("kode", "nama");
@@ -222,43 +216,22 @@ CREATE INDEX "MataKuliah_kode_nama_idx" ON "MataKuliah"("kode", "nama");
 CREATE INDEX "Presensi_mahasiswaNim_jadwalMataKuliahId_idx" ON "Presensi"("mahasiswaNim", "jadwalMataKuliahId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Presensi_mahasiswaNim_jadwalMataKuliahId_tanggal_key" ON "Presensi"("mahasiswaNim", "jadwalMataKuliahId", "tanggal");
-
--- CreateIndex
 CREATE INDEX "JadwalMataKuliah_mataKuliahKode_dosenNip_hari_idx" ON "JadwalMataKuliah"("mataKuliahKode", "dosenNip", "hari");
-
--- CreateIndex
-CREATE UNIQUE INDEX "JadwalMataKuliah_mataKuliahKode_hari_jamMulai_ruangan_key" ON "JadwalMataKuliah"("mataKuliahKode", "hari", "jamMulai", "ruangan");
 
 -- CreateIndex
 CREATE INDEX "MahasiswaJadwal_mahasiswaNim_jadwalMataKuliahId_idx" ON "MahasiswaJadwal"("mahasiswaNim", "jadwalMataKuliahId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "MahasiswaJadwal_mahasiswaNim_jadwalMataKuliahId_key" ON "MahasiswaJadwal"("mahasiswaNim", "jadwalMataKuliahId");
-
--- CreateIndex
 CREATE INDEX "DosenMahasiswa_dosenNip_mahasiswaNim_idx" ON "DosenMahasiswa"("dosenNip", "mahasiswaNim");
-
--- CreateIndex
-CREATE UNIQUE INDEX "DosenMahasiswa_dosenNip_mahasiswaNim_key" ON "DosenMahasiswa"("dosenNip", "mahasiswaNim");
 
 -- CreateIndex
 CREATE INDEX "MahasiswaMataKuliah_mahasiswaNim_mataKuliahKode_idx" ON "MahasiswaMataKuliah"("mahasiswaNim", "mataKuliahKode");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "MahasiswaMataKuliah_mahasiswaNim_mataKuliahKode_key" ON "MahasiswaMataKuliah"("mahasiswaNim", "mataKuliahKode");
-
--- CreateIndex
 CREATE INDEX "DosenMataKuliah_dosenNip_mataKuliahKode_idx" ON "DosenMataKuliah"("dosenNip", "mataKuliahKode");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "DosenMataKuliah_dosenNip_mataKuliahKode_key" ON "DosenMataKuliah"("dosenNip", "mataKuliahKode");
-
--- CreateIndex
 CREATE INDEX "ScanLog_mahasiswaNim_jadwalMataKuliahId_scanTime_idx" ON "ScanLog"("mahasiswaNim", "jadwalMataKuliahId", "scanTime");
-
--- CreateIndex
-CREATE UNIQUE INDEX "ScanLog_jadwalMataKuliahId_key" ON "ScanLog"("jadwalMataKuliahId");
 
 -- CreateIndex
 CREATE INDEX "MahasiswaQRCode_mahasiswaNim_jadwalMataKuliahId_createdAt_idx" ON "MahasiswaQRCode"("mahasiswaNim", "jadwalMataKuliahId", "createdAt");
