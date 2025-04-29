@@ -507,14 +507,13 @@ const refreshToken = async (request) => {
 const logout = async (refreshToken) => {
   try {
     // TODO cek apakah refresh token ada di cookie?
-    if (!refreshToken)
-      throw new ResponseError(400, "Refresh token is required");
+    if (!refreshToken || typeof refreshToken !== "string")
+      throw new ResponseError(400, "Refresh token must be a string");
 
     // TODO Decode token untuk mendapatkan payload token (tanpa verifikasi expiry)
     const decoded = jwt.decode(refreshToken);
-    if (!decoded?.role) {
+    if (!decoded || typeof decoded !== "object")
       throw new ResponseError(400, "Invalid refresh token");
-    }
 
     // TODO Cek validitas token (abaikan jika expired)
     try {
@@ -555,7 +554,11 @@ const logout = async (refreshToken) => {
 
     return;
   } catch (error) {
-    throw new ResponseError(error.status, error.message);
+    console.error("Logout error:", error);
+    throw new ResponseError(
+      error.status || 500,
+      error.message || "Logout failed"
+    );
   }
 };
 
