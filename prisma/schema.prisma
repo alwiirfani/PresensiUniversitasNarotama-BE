@@ -73,7 +73,7 @@ model Mahasiswa {
   password            String                @db.VarChar(255)
   alamat              String                @db.VarChar(255)
   refreshToken        String?
-  prodiId             String
+  prodiId             String                @db.VarChar(255)
   prodi               Prodi                 @relation(fields: [prodiId], references: [id])
   dosenMahasiswa      DosenMahasiswa[]
   mahasiswaMataKuliah MahasiswaMataKuliah[]

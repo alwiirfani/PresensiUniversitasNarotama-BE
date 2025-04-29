@@ -289,7 +289,7 @@ const registerMahasiswa = async (request) => {
     });
 
     // TODO throw error jika nim sudah terdaftar
-    if (mahasiswaExist) throw new ResponseError(400, "NIM already exist");
+    if (mahasiswaExist) throw new ResponseError(400, "Mahasiswa already exist");
 
     // TODO hash password
     const hashedPassword = await bcrypt.hash(
