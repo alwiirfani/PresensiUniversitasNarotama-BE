@@ -22,7 +22,7 @@ const registerDosenSchemaRequest = Joi.object({
 });
 
 const loginDosenSchemaRequest = Joi.object({
-  nip: Joi.string().min(3).max(5).required(),
+  nip: Joi.string().required(5),
   password: Joi.string().min(2).required(),
 });
 
@@ -37,7 +37,7 @@ const registerMahasiswaSchemaRequest = Joi.object({
 });
 
 const loginMahasiswaSchemaRequest = Joi.object({
-  nim: Joi.string().min(3).max(7).required(),
+  nim: Joi.string().required(8),
   password: Joi.string().min(2).required(),
 });
 
