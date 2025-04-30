@@ -68,14 +68,14 @@ const loginAdmin = async (request) => {
   try {
     // TODO cek admin
     const admin = await prisma.admin.findUnique({
-      where: { username: loginAdminRequest.username },
+      where: { username: loginAdminRequest.id },
     });
 
     // TODO cek apakah admin sudah terdaftar throw error
     if (!admin)
       throw new ResponseError(
         404,
-        `Admin with username ${loginAdminRequest.username} not found`
+        `Admin with username ${loginAdminRequest.id} not found`
       );
 
     // TODO cek password
@@ -105,14 +105,14 @@ const loginAdmin = async (request) => {
 
     // TODO buat access token
     const accessToken = jwt.sign(
-      { id: admin.id, username: admin.username, role: "admin" },
+      { id: admin.username, role: "admin" },
       process.env.JWT_SECRET,
       { algorithm: "HS256", expiresIn: "1m", subject: admin.username }
     );
 
     // TODO buat refresh token
     const refreshToken = jwt.sign(
-      { id: admin.id, username: admin.username, role: "admin" },
+      { id: admin.username, role: "admin" },
       process.env.JWT_REFRESH_SECRET,
       { algorithm: "HS256", expiresIn: "1d", subject: admin.username }
     );
@@ -192,7 +192,7 @@ const loginDosen = async (request) => {
   try {
     // TODO cek dosen
     const dosen = await prisma.dosen.findUnique({
-      where: { nip: loginDosenRequest.nip },
+      where: { nip: loginDosenRequest.id },
       include: { prodi: true },
     });
 
@@ -230,14 +230,14 @@ const loginDosen = async (request) => {
 
     // TODO buat access token
     const accessToken = jwt.sign(
-      { nip: dosen.nip, nama: dosen.nama, role: "dosen" },
+      { id: dosen.nip, nama: dosen.nama, role: "dosen" },
       process.env.JWT_SECRET,
       { algorithm: "HS256", expiresIn: "1m", subject: dosen.email }
     );
 
     // TODO buat refresh token
     const refreshToken = jwt.sign(
-      { nip: dosen.nip, nama: dosen.nama, role: "dosen" },
+      { id: dosen.nip, nama: dosen.nama, role: "dosen" },
       process.env.JWT_REFRESH_SECRET,
       { algorithm: "HS256", expiresIn: "1d", subject: dosen.email }
     );
@@ -325,7 +325,7 @@ const loginMahasiswa = async (request) => {
   try {
     // TODO cek mahasiswa
     const mahasiswa = await prisma.mahasiswa.findUnique({
-      where: { nim: loginMahasiswaRequest.nim },
+      where: { nim: loginMahasiswaRequest.id },
       include: { prodi: true },
     });
 
@@ -362,14 +362,14 @@ const loginMahasiswa = async (request) => {
 
     // TODO buat token
     const accessToken = jwt.sign(
-      { nim: mahasiswa.nim, nama: mahasiswa.nama, role: "mahasiswa" },
+      { id: mahasiswa.nim, nama: mahasiswa.nama, role: "mahasiswa" },
       process.env.JWT_SECRET,
       { algorithm: "HS256", expiresIn: "1s", subject: mahasiswa.email }
     );
 
     // TODO buat refresh token
     const refreshToken = jwt.sign(
-      { nim: mahasiswa.nim, nama: mahasiswa.nama, role: "mahasiswa" },
+      { id: mahasiswa.nim, nama: mahasiswa.nama, role: "mahasiswa" },
       process.env.JWT_REFRESH_SECRET,
       { algorithm: "HS256", expiresIn: "1d", subject: mahasiswa.email }
     );
