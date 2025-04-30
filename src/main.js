@@ -29,6 +29,6 @@ app.use(adminRoute, dosenRoute, mahasiswaRoute, verifyRoute, publicRoute);
 
 const PORT = process.env.PORT || 8000;
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   logger.info(`Server running on port ${PORT}`);
 });
