@@ -1,6 +1,7 @@
 import Joi from "joi";
 
 const registerAdminSchemaRequest = Joi.object({
+  pin: Joi.string().required(4),
   username: Joi.string().min(3).required(),
   password: Joi.string().min(2).required(),
   confirmPassword: Joi.string().min(2).required(),

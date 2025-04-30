@@ -1,6 +1,6 @@
 const registerAdminResponse = (registerAdmin) => {
   return {
-    id: registerAdmin.id,
+    pin: registerAdmin.pin,
     username: registerAdmin.username,
     createdAt: registerAdmin.createdAt,
   };

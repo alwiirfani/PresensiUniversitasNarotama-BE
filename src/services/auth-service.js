@@ -17,7 +17,6 @@ import jwt from "jsonwebtoken";
 import { validate } from "../utils/validation-util.js";
 import ResponseError from "../errors/response-error.js";
 import bcrypt from "bcrypt";
-import { v4 as uuid } from "uuid";
 import prodiService from "./prodi-service.js";
 
 // TODO resgister admin
@@ -47,7 +46,7 @@ const registerAdmin = async (request) => {
     // TODO buat admin
     const newAdmin = await prisma.admin.create({
       data: {
-        id: uuid().toString(),
+        pin: registerAdminRequest.pin,
         username: registerAdminRequest.username,
         password: hashedPassword,
         createdAt: new Date(),
@@ -68,7 +67,7 @@ const loginAdmin = async (request) => {
   try {
     // TODO cek admin
     const admin = await prisma.admin.findUnique({
-      where: { username: loginAdminRequest.id },
+      where: { pin: loginAdminRequest.id },
     });
 
     // TODO cek apakah admin sudah terdaftar throw error
@@ -97,7 +96,7 @@ const loginAdmin = async (request) => {
           // TODO update refresh token
           await prisma.admin.update({
             data: { refreshToken: null, updatedAt: new Date() },
-            where: { id: admin.id },
+            where: { pin: admin.pin },
           });
         }
       }
@@ -105,14 +104,14 @@ const loginAdmin = async (request) => {
 
     // TODO buat access token
     const accessToken = jwt.sign(
-      { id: admin.username, role: "admin" },
+      { id: admin.pin, nama: admin.username, role: "admin" },
       process.env.JWT_SECRET,
       { algorithm: "HS256", expiresIn: "1m", subject: admin.username }
     );
 
     // TODO buat refresh token
     const refreshToken = jwt.sign(
-      { id: admin.username, role: "admin" },
+      { id: admin.pin, nama: admin.username, role: "admin" },
       process.env.JWT_REFRESH_SECRET,
       { algorithm: "HS256", expiresIn: "1d", subject: admin.username }
     );
@@ -120,11 +119,11 @@ const loginAdmin = async (request) => {
     // TODO update admin
     await prisma.admin.update({
       data: { refreshToken: refreshToken, updatedAt: new Date() },
-      where: { id: admin.id },
+      where: { pin: admin.pin },
     });
 
     return {
-      id: admin.id,
+      pin: admin.pin,
       username: admin.username,
       role: "admin",
       accessToken: accessToken,
@@ -408,7 +407,7 @@ const refreshToken = async (request) => {
      */
     if (decode.role === "admin") {
       const admin = await prisma.admin.findUnique({
-        where: { username: decode.username },
+        where: { pin: decode.id },
       });
 
       if (!admin)
@@ -422,9 +421,9 @@ const refreshToken = async (request) => {
         throw new ResponseError(400, "Invalid refresh token");
 
       accessToken = jwt.sign(
-        { id: decode.id, username: decode.username, role: "admin" },
+        { id: decode.id, nama: decode.nama, role: "admin" },
         process.env.JWT_SECRET,
-        { algorithm: "HS256", expiresIn: "1d", subject: decode.username }
+        { algorithm: "HS256", expiresIn: "1d", subject: decode.nama }
       );
     }
 

@@ -34,5 +34,5 @@ app.listen(PORT, "0.0.0.0", () => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Server is up and running!");
+  res.send("PING!!");
 });

@@ -29,14 +29,14 @@ CREATE TABLE "Prodi" (
 
 -- CreateTable
 CREATE TABLE "Admin" (
-    "id" VARCHAR(255) NOT NULL,
+    "pin" CHAR(4) NOT NULL,
     "username" VARCHAR(255) NOT NULL,
     "password" VARCHAR(255) NOT NULL,
     "refreshToken" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Admin_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Admin_pkey" PRIMARY KEY ("pin")
 );
 
 -- CreateTable
