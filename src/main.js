@@ -27,8 +27,8 @@ app.use(loggerInfo);
 app.use(cookieParser());
 app.use(adminRoute, dosenRoute, mahasiswaRoute, verifyRoute, publicRoute);
 
-const PORT = process.env.SERVER_PORT || 8000;
+const PORT = process.env.PORT || 8000;
 
-app.listen(PORT, "0.0.0.0", () => {
+app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`);
 });
