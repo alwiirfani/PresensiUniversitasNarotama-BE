@@ -106,14 +106,22 @@ const loginAdmin = async (request) => {
     const accessToken = jwt.sign(
       { id: admin.pin, nama: admin.username, role: "admin" },
       process.env.JWT_SECRET,
-      { algorithm: "HS256", expiresIn: "1m", subject: admin.username }
+      {
+        algorithm: "HS256",
+        expiresIn: process.env.JWT_EXPIRATION,
+        subject: admin.username,
+      }
     );
 
     // TODO buat refresh token
     const refreshToken = jwt.sign(
       { id: admin.pin, nama: admin.username, role: "admin" },
       process.env.JWT_REFRESH_SECRET,
-      { algorithm: "HS256", expiresIn: "1d", subject: admin.username }
+      {
+        algorithm: "HS256",
+        expiresIn: process.env.JWT_REFRESH_EXPIRATION,
+        subject: admin.username,
+      }
     );
 
     // TODO update admin
@@ -231,14 +239,22 @@ const loginDosen = async (request) => {
     const accessToken = jwt.sign(
       { id: dosen.nip, nama: dosen.nama, role: "dosen" },
       process.env.JWT_SECRET,
-      { algorithm: "HS256", expiresIn: "1m", subject: dosen.email }
+      {
+        algorithm: "HS256",
+        expiresIn: process.env.JWT_EXPIRATION,
+        subject: dosen.email,
+      }
     );
 
     // TODO buat refresh token
     const refreshToken = jwt.sign(
       { id: dosen.nip, nama: dosen.nama, role: "dosen" },
       process.env.JWT_REFRESH_SECRET,
-      { algorithm: "HS256", expiresIn: "1d", subject: dosen.email }
+      {
+        algorithm: "HS256",
+        expiresIn: process.env.JWT_REFRESH_EXPIRATION,
+        subject: dosen.email,
+      }
     );
 
     // TODO update dosen
@@ -363,14 +379,22 @@ const loginMahasiswa = async (request) => {
     const accessToken = jwt.sign(
       { id: mahasiswa.nim, nama: mahasiswa.nama, role: "mahasiswa" },
       process.env.JWT_SECRET,
-      { algorithm: "HS256", expiresIn: "1s", subject: mahasiswa.email }
+      {
+        algorithm: "HS256",
+        expiresIn: process.env.JWT_EXPIRATION,
+        subject: mahasiswa.email,
+      }
     );
 
     // TODO buat refresh token
     const refreshToken = jwt.sign(
       { id: mahasiswa.nim, nama: mahasiswa.nama, role: "mahasiswa" },
       process.env.JWT_REFRESH_SECRET,
-      { algorithm: "HS256", expiresIn: "1d", subject: mahasiswa.email }
+      {
+        algorithm: "HS256",
+        expiresIn: process.env.JWT_REFRESH_EXPIRATION,
+        subject: mahasiswa.email,
+      }
     );
 
     // TODO update mahasiswa
@@ -423,7 +447,11 @@ const refreshToken = async (request) => {
       accessToken = jwt.sign(
         { id: decode.id, nama: decode.nama, role: "admin" },
         process.env.JWT_SECRET,
-        { algorithm: "HS256", expiresIn: "1d", subject: decode.nama }
+        {
+          algorithm: "HS256",
+          expiresIn: process.env.JWT_EXPIRATION,
+          subject: decode.nama,
+        }
       );
     }
 
@@ -442,7 +470,11 @@ const refreshToken = async (request) => {
       accessToken = jwt.sign(
         { nip: decode.nip, nama: decode.nama, role: "dosen" },
         process.env.JWT_SECRET,
-        { algorithm: "HS256", expiresIn: "1d", subject: dosen.email }
+        {
+          algorithm: "HS256",
+          expiresIn: process.env.JWT_EXPIRATION,
+          subject: dosen.email,
+        }
       );
     }
 
@@ -464,7 +496,11 @@ const refreshToken = async (request) => {
       accessToken = jwt.sign(
         { nim: decode.nim, nama: decode.nama, role: "mahasiswa" },
         process.env.JWT_SECRET,
-        { algorithm: "HS256", expiresIn: "1d", subject: mahasiswa.email }
+        {
+          algorithm: "HS256",
+          expiresIn: process.env.JWT_EXPIRATION,
+          subject: mahasiswa.email,
+        }
       );
     }
 
