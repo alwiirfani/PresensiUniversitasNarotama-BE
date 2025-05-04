@@ -7,7 +7,7 @@ import {
   findFakultasByIdResponse,
   updateFakultasResponse,
 } from "../dto/response/fakultas/fakultas-response.js";
-import prisma from "../configs/db/prisma.js";
+import prisma from "../manager/db/prisma.js";
 import { validate } from "../utils/validation-util.js";
 import ResponseError from "../errors/response-error.js";
 import { v4 as uuid } from "uuid";

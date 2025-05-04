@@ -5,6 +5,11 @@ import prodiController from "../controllers/prodi-controller.js";
 
 const publicRoute = express.Router();
 
+// PING
+publicRoute.get("/", (req, res) => {
+  res.send("PING!!");
+});
+
 // AUTHENTICATION
 publicRoute.post("/api/v1/auth/admin-register", authController.registerAdmin);
 publicRoute.post("/api/v1/auth/admin-login", authController.loginAdmin);

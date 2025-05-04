@@ -7,7 +7,7 @@ import {
   updateMahasiswaResponse,
 } from "../dto/response/mahasiswa/mahasiswa-response.js";
 import { validate } from "../utils/validation-util.js";
-import prisma from "../configs/db/prisma.js";
+import prisma from "../manager/db/prisma.js";
 import ResponseError from "../errors/response-error.js";
 import bcrypt from "bcrypt";
 import { Prisma } from "@prisma/client";

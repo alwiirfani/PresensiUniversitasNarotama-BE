@@ -7,7 +7,7 @@ import {
   findProdiByIdResponse,
   updateProdiResponse,
 } from "../dto/response/prodi/prodi-response.js";
-import prisma from "../configs/db/prisma.js";
+import prisma from "../manager/db/prisma.js";
 import { validate } from "../utils/validation-util.js";
 import fakultasService from "./fakultas-service.js";
 import ResponseError from "../errors/response-error.js";

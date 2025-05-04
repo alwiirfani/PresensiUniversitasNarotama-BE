@@ -12,7 +12,7 @@ import {
   registerMahasiswaResponse,
 } from "../dto/response/authentication/auth-response.js";
 import "dotenv/config";
-import prisma from "../configs/db/prisma.js";
+import prisma from "../manager/db/prisma.js";
 import jwt from "jsonwebtoken";
 import { validate } from "../utils/validation-util.js";
 import ResponseError from "../errors/response-error.js";
