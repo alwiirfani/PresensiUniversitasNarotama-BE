@@ -22,12 +22,12 @@ const updateManyMataKuliahMahasiswaSchemaRequest = Joi.object({
     .items(Joi.string().required())
     .min(1)
     .required()
-    .message({
+    .messages({
       "array.base": `"mataKuliah" harus berupa array`,
       "array.min": `"mataKuliah" harus memiliki minimal 1 mata kuliah`,
       "any.required": `"mataKuliah" harus diisi`,
     }),
-  semester: Joi.number().integer().min(1).optional().message({
+  semester: Joi.number().integer().min(1).optional().messages({
     "number.base": `"semester" harus berupa angka`,
     "number.integer": `"semester" harus berupa angka bulat`,
     "number.min": `"semester" harus lebih besar dari 0`,
