@@ -108,7 +108,7 @@ const loginAdmin = async (request) => {
       process.env.JWT_SECRET,
       {
         algorithm: "HS256",
-        expiresIn: process.env.JWT_EXPIRATION,
+        expiresIn: process.env.JWT_EXPIRES_IN,
         subject: admin.username,
       }
     );
@@ -119,7 +119,7 @@ const loginAdmin = async (request) => {
       process.env.JWT_REFRESH_SECRET,
       {
         algorithm: "HS256",
-        expiresIn: process.env.JWT_REFRESH_EXPIRATION,
+        expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
         subject: admin.username,
       }
     );
@@ -241,7 +241,7 @@ const loginDosen = async (request) => {
       process.env.JWT_SECRET,
       {
         algorithm: "HS256",
-        expiresIn: process.env.JWT_EXPIRATION,
+        expiresIn: process.env.JWT_EXPIRES_IN,
         subject: dosen.email,
       }
     );
@@ -252,7 +252,7 @@ const loginDosen = async (request) => {
       process.env.JWT_REFRESH_SECRET,
       {
         algorithm: "HS256",
-        expiresIn: process.env.JWT_REFRESH_EXPIRATION,
+        expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
         subject: dosen.email,
       }
     );
@@ -381,7 +381,7 @@ const loginMahasiswa = async (request) => {
       process.env.JWT_SECRET,
       {
         algorithm: "HS256",
-        expiresIn: process.env.JWT_EXPIRATION,
+        expiresIn: process.env.JWT_EXPIRES_IN,
         subject: mahasiswa.email,
       }
     );
@@ -392,7 +392,7 @@ const loginMahasiswa = async (request) => {
       process.env.JWT_REFRESH_SECRET,
       {
         algorithm: "HS256",
-        expiresIn: process.env.JWT_REFRESH_EXPIRATION,
+        expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
         subject: mahasiswa.email,
       }
     );
@@ -449,7 +449,7 @@ const refreshToken = async (request) => {
         process.env.JWT_SECRET,
         {
           algorithm: "HS256",
-          expiresIn: process.env.JWT_EXPIRATION,
+          expiresIn: process.env.JWT_EXPIRES_IN,
           subject: decode.nama,
         }
       );
@@ -472,7 +472,7 @@ const refreshToken = async (request) => {
         process.env.JWT_SECRET,
         {
           algorithm: "HS256",
-          expiresIn: process.env.JWT_EXPIRATION,
+          expiresIn: process.env.JWT_EXPIRES_IN,
           subject: dosen.email,
         }
       );
@@ -498,7 +498,7 @@ const refreshToken = async (request) => {
         process.env.JWT_SECRET,
         {
           algorithm: "HS256",
-          expiresIn: process.env.JWT_EXPIRATION,
+          expiresIn: process.env.JWT_EXPIRES_IN,
           subject: mahasiswa.email,
         }
       );
