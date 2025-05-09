@@ -2,6 +2,7 @@ import express from "express";
 import fakultasController from "../controllers/fakultas-controller.js";
 import authController from "../controllers/auth-controller.js";
 import prodiController from "../controllers/prodi-controller.js";
+import presensiDosenController from "../controllers/presensi-dosen-controller.js";
 
 const publicRoute = express.Router();
 
@@ -29,5 +30,11 @@ publicRoute.get("/api/v1/fakultas", fakultasController.findAllFakultas);
 // PRODI
 publicRoute.get("/api/v1/prodi/:id", prodiController.findProdiById);
 publicRoute.get("/api/v1/prodi", prodiController.findAllProdi);
+
+// PRESENSI DOSEN
+publicRoute.get(
+  "/api/v1/presensi-dosen",
+  presensiDosenController.findAllPresensiDosen
+);
 
 export { publicRoute };
