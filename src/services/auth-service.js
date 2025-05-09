@@ -539,23 +539,23 @@ const refreshToken = async (request) => {
 };
 
 // TODO logout
-const logout = async (refreshToken) => {
+const logout = async (accessToken) => {
   try {
     // TODO cek apakah refresh token ada di cookie?
-    if (!refreshToken || typeof refreshToken !== "string")
-      throw new ResponseError(400, "Refresh token must be a string");
+    if (!accessToken || typeof accessToken !== "string")
+      throw new ResponseError(400, "Access token must be a string");
 
     // TODO Decode token untuk mendapatkan payload token (tanpa verifikasi expiry)
-    const decoded = jwt.decode(refreshToken);
+    const decoded = jwt.decode(accessToken);
     if (!decoded || typeof decoded !== "object")
-      throw new ResponseError(400, "Invalid refresh token");
+      throw new ResponseError(400, "Invalid access token");
 
     // TODO Cek validitas token (abaikan jika expired)
     try {
-      jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+      jwt.verify(accessToken, process.env.JWT_SECRET);
     } catch (verifyError) {
       if (verifyError.name !== "TokenExpiredError") {
-        throw new ResponseError(401, "Invalid refresh token");
+        throw new ResponseError(401, "Invalid access token");
       }
     }
 
@@ -565,17 +565,17 @@ const logout = async (refreshToken) => {
 
     if (role === "admin") {
       updateResult = await prisma.admin.updateMany({
-        where: { username: decoded.username, refreshToken: refreshToken },
+        where: { username: decoded.username },
         data: { refreshToken: null, updatedAt: new Date() },
       });
     } else if (role === "dosen") {
       updateResult = await prisma.dosen.updateMany({
-        where: { nip: decoded.nip, refreshToken: refreshToken },
+        where: { nip: decoded.nip },
         data: { refreshToken: null, updatedAt: new Date() },
       });
     } else if (role === "mahasiswa") {
       updateResult = await prisma.mahasiswa.updateMany({
-        where: { nim: decoded.nim, refreshToken: refreshToken },
+        where: { nim: decoded.nim },
         data: { refreshToken: null, updatedAt: new Date() },
       });
     } else {

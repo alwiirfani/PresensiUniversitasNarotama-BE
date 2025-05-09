@@ -158,7 +158,7 @@ const refreshToken = async (req, res, next) => {
 const logout = async (req, res, next) => {
   try {
     // TODO panggil service
-    await authService.logout(req.cookies.refreshToken);
+    await authService.logout(req.params.accessToken);
 
     // TODO hapus cookie
     res.clearCookie("refreshToken", {

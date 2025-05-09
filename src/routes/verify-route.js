@@ -7,7 +7,11 @@ import mahasiswaController from "../controllers/mahasiswa-controller.js";
 const verifyRoute = express.Router();
 
 // AUTHENTICATION
-verifyRoute.delete("/api/v1/auth/logout", verifyToken, authController.logout);
+verifyRoute.delete(
+  "/api/v1/auth/logout/:accessToken",
+  verifyToken,
+  authController.logout
+);
 
 // DOSEN
 verifyRoute.get(
