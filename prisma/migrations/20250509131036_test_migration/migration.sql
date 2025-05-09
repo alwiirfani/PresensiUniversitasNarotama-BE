@@ -82,7 +82,7 @@ CREATE TABLE "MataKuliah" (
 );
 
 -- CreateTable
-CREATE TABLE "Presensi" (
+CREATE TABLE "PresensiMahasiswa" (
     "id" VARCHAR(255) NOT NULL,
     "mahasiswaNim" CHAR(8) NOT NULL,
     "jadwalMataKuliahId" VARCHAR(255) NOT NULL,
@@ -93,7 +93,20 @@ CREATE TABLE "Presensi" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "verifiedByDosenNip" TEXT,
 
-    CONSTRAINT "Presensi_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "PresensiMahasiswa_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "PresensiDosen" (
+    "id" VARCHAR(255) NOT NULL,
+    "dosenNip" CHAR(5) NOT NULL,
+    "jadwalMataKuliahId" VARCHAR(255) NOT NULL,
+    "tanggal" TIMESTAMP(3) NOT NULL,
+    "scanTime" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "status" "StatusPresensi" NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "PresensiDosen_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -213,7 +226,10 @@ CREATE INDEX "Dosen_nip_email_idx" ON "Dosen"("nip", "email");
 CREATE INDEX "MataKuliah_kode_nama_idx" ON "MataKuliah"("kode", "nama");
 
 -- CreateIndex
-CREATE INDEX "Presensi_mahasiswaNim_jadwalMataKuliahId_idx" ON "Presensi"("mahasiswaNim", "jadwalMataKuliahId");
+CREATE INDEX "PresensiMahasiswa_mahasiswaNim_jadwalMataKuliahId_idx" ON "PresensiMahasiswa"("mahasiswaNim", "jadwalMataKuliahId");
+
+-- CreateIndex
+CREATE INDEX "PresensiDosen_dosenNip_jadwalMataKuliahId_idx" ON "PresensiDosen"("dosenNip", "jadwalMataKuliahId");
 
 -- CreateIndex
 CREATE INDEX "JadwalMataKuliah_mataKuliahKode_dosenNip_hari_idx" ON "JadwalMataKuliah"("mataKuliahKode", "dosenNip", "hari");
@@ -249,13 +265,19 @@ ALTER TABLE "Dosen" ADD CONSTRAINT "Dosen_prodiId_fkey" FOREIGN KEY ("prodiId") 
 ALTER TABLE "MataKuliah" ADD CONSTRAINT "MataKuliah_prodiId_fkey" FOREIGN KEY ("prodiId") REFERENCES "Prodi"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Presensi" ADD CONSTRAINT "Presensi_mahasiswaNim_fkey" FOREIGN KEY ("mahasiswaNim") REFERENCES "Mahasiswa"("nim") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "PresensiMahasiswa" ADD CONSTRAINT "PresensiMahasiswa_mahasiswaNim_fkey" FOREIGN KEY ("mahasiswaNim") REFERENCES "Mahasiswa"("nim") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Presensi" ADD CONSTRAINT "Presensi_jadwalMataKuliahId_fkey" FOREIGN KEY ("jadwalMataKuliahId") REFERENCES "JadwalMataKuliah"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "PresensiMahasiswa" ADD CONSTRAINT "PresensiMahasiswa_jadwalMataKuliahId_fkey" FOREIGN KEY ("jadwalMataKuliahId") REFERENCES "JadwalMataKuliah"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Presensi" ADD CONSTRAINT "Presensi_verifiedByDosenNip_fkey" FOREIGN KEY ("verifiedByDosenNip") REFERENCES "Dosen"("nip") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "PresensiMahasiswa" ADD CONSTRAINT "PresensiMahasiswa_verifiedByDosenNip_fkey" FOREIGN KEY ("verifiedByDosenNip") REFERENCES "Dosen"("nip") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PresensiDosen" ADD CONSTRAINT "PresensiDosen_dosenNip_fkey" FOREIGN KEY ("dosenNip") REFERENCES "Dosen"("nip") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PresensiDosen" ADD CONSTRAINT "PresensiDosen_jadwalMataKuliahId_fkey" FOREIGN KEY ("jadwalMataKuliahId") REFERENCES "JadwalMataKuliah"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "JadwalMataKuliah" ADD CONSTRAINT "JadwalMataKuliah_mataKuliahKode_fkey" FOREIGN KEY ("mataKuliahKode") REFERENCES "MataKuliah"("kode") ON DELETE RESTRICT ON UPDATE CASCADE;

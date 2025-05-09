@@ -179,6 +179,27 @@ const logout = async (req, res, next) => {
   }
 };
 
+// testing
+// const loginMahasiswaGet = async (req, res, next) => {
+//   try {
+//     console.log(req.body);
+
+//     const response = await authService.loginMahasiswaGet(req.body);
+
+//     console.log(response);
+
+//     // TODO kirim response
+//     res.status(200).json({
+//       status: 200,
+//       message: "Mahasiswa logged in successfully",
+//       data: response,
+//     });
+//   } catch (error) {
+//     const status = error.status || 500;
+//     next(res.status(status).json({ status: status, message: error.message }));
+//   }
+// };
+
 export default {
   registerAdmin,
   loginAdmin,

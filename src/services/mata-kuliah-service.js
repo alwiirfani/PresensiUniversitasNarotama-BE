@@ -52,6 +52,7 @@ const findMataKuliahByKode = (mataKuliahKode) => {};
 const findAllMataKuliah = ({ namaProdi, page = 1, pageSize = 10 }) => {};
 
 const deleteMataKuliah = (mataKuliahKode) => {};
+
 export default {
   createMataKuliah,
   updateMatakuliah,

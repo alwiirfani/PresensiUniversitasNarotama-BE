@@ -17,6 +17,11 @@ publicRoute.post("/api/v1/auth/dosen-login", authController.loginDosen);
 publicRoute.post("/api/v1/auth/mahasiswa-login", authController.loginMahasiswa);
 publicRoute.get("/api/v1/auth/refresh-token", authController.refreshToken);
 
+// publicRoute.get(
+//   "/api/v1/auth/mahasiswa-login-get",
+//   authController.loginMahasiswaGet
+// );
+
 // FAKULTAS
 publicRoute.get("/api/v1/fakultas/:id", fakultasController.findFakultasById);
 publicRoute.get("/api/v1/fakultas", fakultasController.findAllFakultas);

@@ -80,7 +80,7 @@ model Mahasiswa {
   mahasiswaJadwal     MahasiswaJadwal[]
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
-  Presensi            Presensi[]
+  PresensiMahasiswa   PresensiMahasiswa[]
   MahasiswaQRCode     MahasiswaQRCode[]
 
   @@index([nim, email])
@@ -88,21 +88,22 @@ model Mahasiswa {
 
 // Entitas Dosen
 model Dosen {
-  nip              String             @id @default(uuid()) @db.Char(5)
-  nama             String             @db.VarChar(255)
-  email            String             @unique @db.VarChar(255)
-  password         String             @db.VarChar(255)
-  alamat           String             @db.VarChar(255)
-  refreshToken     String?
-  prodiId          String             @db.VarChar(255)
-  prodi            Prodi              @relation(fields: [prodiId], references: [id])
-  dosenMahasiswa   DosenMahasiswa[]
-  dosenMatakuliah  DosenMataKuliah[]
-  jadwalMataKuliah JadwalMataKuliah[]
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  verifiedPresensi Presensi[]         @relation("VerifiedPresensi")
-  ScanLog          ScanLog[]
+  nip                       String              @id @default(uuid()) @db.Char(5)
+  nama                      String              @db.VarChar(255)
+  email                     String              @unique @db.VarChar(255)
+  password                  String              @db.VarChar(255)
+  alamat                    String              @db.VarChar(255)
+  refreshToken              String?
+  prodiId                   String              @db.VarChar(255)
+  prodi                     Prodi               @relation(fields: [prodiId], references: [id])
+  dosenMahasiswa            DosenMahasiswa[]
+  dosenMatakuliah           DosenMataKuliah[]
+  jadwalMataKuliah          JadwalMataKuliah[]
+  createdAt                 DateTime            @default(now())
+  updatedAt                 DateTime            @updatedAt
+  verifiedPresensiMahasiswa PresensiMahasiswa[] @relation("VerifiedPresensi")
+  ScanLog                   ScanLog[]
+  PresensiDosen             PresensiDosen[]
 
   @@index([nip, email])
 }
@@ -123,8 +124,8 @@ model MataKuliah {
   @@index([kode, nama])
 }
 
-// Entitas Presensi
-model Presensi {
+// Entitas Presensi mahasiswa
+model PresensiMahasiswa {
   id                 String           @id @default(uuid()) @db.VarChar(255)
   mahasiswaNim       String           @db.Char(8)
   jadwalMataKuliahId String           @db.VarChar(255)
@@ -141,26 +142,42 @@ model Presensi {
   @@index([mahasiswaNim, jadwalMataKuliahId])
 }
 
+// Entitas Presensi Dosen
+model PresensiDosen {
+  id                 String           @id @default(uuid()) @db.VarChar(255)
+  dosenNip           String           @db.Char(5)
+  jadwalMataKuliahId String           @db.VarChar(255)
+  tanggal            DateTime
+  scanTime           DateTime         @default(now())
+  status             StatusPresensi
+  dosen              Dosen            @relation(fields: [dosenNip], references: [nip])
+  jadwalMataKuliah   JadwalMataKuliah @relation(fields: [jadwalMataKuliahId], references: [id])
+  createdAt          DateTime         @default(now())
+
+  @@index([dosenNip, jadwalMataKuliahId])
+}
+
 // Entitas Jadwal Mata Kuliah
 model JadwalMataKuliah {
-  id              String            @id @default(uuid()) @db.VarChar(255)
-  hari            String            @db.VarChar(10)
-  jamMulai        String            @db.VarChar(50)
-  jamSelesai      String            @db.VarChar(50)
-  ruangan         String            @db.VarChar(10)
-  mataKuliahKode  String            @db.Char(5)
-  mataKuliah      MataKuliah        @relation(fields: [mataKuliahKode], references: [kode])
-  dosenNip        String            @db.Char(7)
-  dosen           Dosen             @relation(fields: [dosenNip], references: [nip])
-  mahasiswaJadwal MahasiswaJadwal[]
-  presensi        Presensi[]
-  qrCodeToken     String?           @default(uuid()) @db.VarChar(255)
-  qrCodeExpiredAt DateTime?
-  qrCodeUrl       String?           @db.VarChar(255)
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  ScanLog         ScanLog[]
-  MahasiswaQRCode MahasiswaQRCode[]
+  id                String              @id @default(uuid()) @db.VarChar(255)
+  hari              String              @db.VarChar(10)
+  jamMulai          String              @db.VarChar(50)
+  jamSelesai        String              @db.VarChar(50)
+  ruangan           String              @db.VarChar(10)
+  mataKuliahKode    String              @db.Char(5)
+  mataKuliah        MataKuliah          @relation(fields: [mataKuliahKode], references: [kode])
+  dosenNip          String              @db.Char(7)
+  dosen             Dosen               @relation(fields: [dosenNip], references: [nip])
+  mahasiswaJadwal   MahasiswaJadwal[]
+  presensiMahasiswa PresensiMahasiswa[]
+  qrCodeToken       String?             @default(uuid()) @db.VarChar(255)
+  qrCodeExpiredAt   DateTime?
+  qrCodeUrl         String?             @db.VarChar(255)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  ScanLog           ScanLog[]
+  MahasiswaQRCode   MahasiswaQRCode[]
+  PresensiDosen     PresensiDosen[]
 
   @@index([mataKuliahKode, dosenNip, hari])
 }
