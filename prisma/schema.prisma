@@ -132,10 +132,11 @@ model PresensiMahasiswa {
   tanggal            DateTime
   scanTime           DateTime         @default(now())
   status             StatusPresensi
-  qrTokenUsed        String
   mahasiswa          Mahasiswa        @relation(fields: [mahasiswaNim], references: [nim])
   jadwalMataKuliah   JadwalMataKuliah @relation(fields: [jadwalMataKuliahId], references: [id])
   createdAt          DateTime         @default(now())
+  qrCodeId           String?
+  mahasiswaQRCode    MahasiswaQRCode? @relation(fields: [qrCodeId], references: [id])
   verifiedByDosenNip String?
   verifiedByDosen    Dosen?           @relation(fields: [verifiedByDosenNip], references: [nip], name: "VerifiedPresensi")
 
@@ -170,9 +171,6 @@ model JadwalMataKuliah {
   dosen             Dosen               @relation(fields: [dosenNip], references: [nip])
   mahasiswaJadwal   MahasiswaJadwal[]
   presensiMahasiswa PresensiMahasiswa[]
-  qrCodeToken       String?             @default(uuid()) @db.VarChar(255)
-  qrCodeExpiredAt   DateTime?
-  qrCodeUrl         String?             @db.VarChar(255)
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
   ScanLog           ScanLog[]
@@ -233,7 +231,7 @@ model DosenMataKuliah {
   @@index([dosenNip, mataKuliahKode])
 }
 
-// Entitas untuk Log Scan Gagal (Baru)
+// Entitas untuk Log Scan
 model ScanLog {
   id                 String            @id @default(uuid())
   mahasiswaNim       String?           @db.Char(8)
@@ -251,16 +249,17 @@ model ScanLog {
 
 // Entitas untuk QR Code yang dibuat mahasiswa
 model MahasiswaQRCode {
-  id                 String           @id @default(uuid())
+  id                 String              @id @default(uuid())
   mahasiswaNim       String
-  mahasiswa          Mahasiswa        @relation(fields: [mahasiswaNim], references: [nim])
+  mahasiswa          Mahasiswa           @relation(fields: [mahasiswaNim], references: [nim])
   jadwalMataKuliahId String
-  jadwalMataKuliah   JadwalMataKuliah @relation(fields: [jadwalMataKuliahId], references: [id])
+  jadwalMataKuliah   JadwalMataKuliah    @relation(fields: [jadwalMataKuliahId], references: [id])
   qrToken            String
-  createdAt          DateTime         @default(now())
+  createdAt          DateTime            @default(now())
   expiredAt          DateTime
-  isUsed             Boolean          @default(false)
+  isUsed             Boolean             @default(false)
   usedAt             DateTime?
+  presensiMahasiswa  PresensiMahasiswa[]
 
   @@index([mahasiswaNim, jadwalMataKuliahId, createdAt])
 }

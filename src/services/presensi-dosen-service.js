@@ -2,7 +2,20 @@ import prisma from "../manager/db/prisma.js";
 
 const findAllPresensiDosen = async () => {
   return await prisma.presensiDosen.findMany({
-    include: { dosen: true, jadwalMataKuliah: true },
+    select: {
+      id: true,
+      status: true,
+      scanTime: true,
+      dosen: {
+        select: {
+          nama: true,
+          prodi: {
+            select: { nama: true, fakultas: { select: { nama: true } } },
+          },
+        },
+      },
+      createdAt: true,
+    },
     orderBy: { createdAt: "desc" },
   });
 };
