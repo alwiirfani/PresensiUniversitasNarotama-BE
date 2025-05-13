@@ -6,6 +6,7 @@ const findAllPresensiDosen = async () => {
       id: true,
       status: true,
       scanTime: true,
+      tanggal: true,
       dosen: {
         select: {
           nama: true,
