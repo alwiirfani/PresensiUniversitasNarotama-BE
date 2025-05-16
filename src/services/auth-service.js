@@ -597,68 +597,6 @@ const logout = async (accessToken) => {
   }
 };
 
-// testing
-// const loginMahasiswaGet = async (request) => {
-//   try {
-//     console.log("service", request);
-
-//     const mahasiswaExist = await prisma.mahasiswa.findUnique({
-//       where: { nim: request.id },
-//       include: { prodi: true },
-//     });
-//     console.log("mahasiswa exist", mahasiswaExist);
-
-//     if (!mahasiswaExist) throw new ResponseError(404, "Mahasiswa not found");
-
-//     const bcryptPass = await bcrypt.compare(
-//       request.password,
-//       mahasiswaExist.password
-//     );
-
-//     if (!bcryptPass) throw new ResponseError(401, "invalid password");
-
-//     // TODO buat token
-//     const accessToken = jwt.sign(
-//       { id: mahasiswaExist.nim, nama: mahasiswaExist.nama, role: "mahasiswa" },
-//       process.env.JWT_SECRET,
-//       {
-//         algorithm: "HS256",
-//         expiresIn: process.env.JWT_EXPIRES_IN,
-//         subject: mahasiswaExist.email,
-//       }
-//     );
-
-//     // TODO buat refresh token
-//     const refreshToken = jwt.sign(
-//       { id: mahasiswaExist.nim, nama: mahasiswaExist.nama, role: "mahasiswa" },
-//       process.env.JWT_REFRESH_SECRET,
-//       {
-//         algorithm: "HS256",
-//         expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
-//         subject: mahasiswaExist.email,
-//       }
-//     );
-
-//     // TODO update mahasiswa
-//     await prisma.mahasiswa.update({
-//       data: { refreshToken: refreshToken, updatedAt: new Date() },
-//       where: { nim: mahasiswaExist.nim },
-//     });
-
-//     console.log(mahasiswaExist, accessToken, refreshToken);
-
-//     return {
-//       nim: mahasiswaExist.nim,
-//       nama: mahasiswaExist.nama,
-//       role: "mahasiswa",
-//       accessToken: accessToken,
-//       refreshToken: refreshToken,
-//     };
-//   } catch (error) {
-//     throw new ResponseError(error.status, error, message);
-//   }
-// };
-
 export default {
   registerAdmin,
   loginAdmin,

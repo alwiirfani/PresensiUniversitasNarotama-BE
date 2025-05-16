@@ -129,8 +129,7 @@ model PresensiMahasiswa {
   id                 String           @id @default(uuid()) @db.VarChar(255)
   mahasiswaNim       String           @db.Char(8)
   jadwalMataKuliahId String           @db.VarChar(255)
-  tanggal            DateTime
-  scanTime           DateTime         @default(now())
+  tanggal            DateTime         @default(now())
   status             StatusPresensi
   mahasiswa          Mahasiswa        @relation(fields: [mahasiswaNim], references: [nim])
   jadwalMataKuliah   JadwalMataKuliah @relation(fields: [jadwalMataKuliahId], references: [id])
@@ -148,8 +147,7 @@ model PresensiDosen {
   id                 String           @id @default(uuid()) @db.VarChar(255)
   dosenNip           String           @db.Char(5)
   jadwalMataKuliahId String           @db.VarChar(255)
-  tanggal            DateTime
-  scanTime           DateTime         @default(now())
+  tanggal            DateTime         @default(now())
   status             StatusPresensi
   dosen              Dosen            @relation(fields: [dosenNip], references: [nip])
   jadwalMataKuliah   JadwalMataKuliah @relation(fields: [jadwalMataKuliahId], references: [id])

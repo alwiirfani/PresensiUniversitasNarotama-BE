@@ -5,7 +5,7 @@ import prodiController from "../controllers/prodi-controller.js";
 import authController from "../controllers/auth-controller.js";
 import dosenController from "../controllers/dosen-controller.js";
 import mahasiswaController from "../controllers/mahasiswa-controller.js";
-import mataKuliahService from "../services/mata-kuliah-service.js";
+import mataKuliahController from "../controllers/mata-kuliah-controller.js";
 
 const adminRoute = express.Router();
 
@@ -81,7 +81,17 @@ adminRoute.delete(
 adminRoute.post(
   "/api/v1/mata-kuliah",
   verifyTokenAdmin,
-  mataKuliahService.createMataKuliah
+  mataKuliahController.createMataKuliah
+);
+adminRoute.put(
+  "/api/v1/mata-kuliah",
+  verifyTokenAdmin,
+  mataKuliahController.updateMataKuliah
+);
+adminRoute.delete(
+  "/api/v1/mata-kuliah/:kode",
+  verifyTokenAdmin,
+  mataKuliahController.deleteMataKuliah
 );
 
 // JADWAL MATA KULIAH

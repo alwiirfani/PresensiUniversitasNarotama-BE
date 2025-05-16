@@ -8,6 +8,7 @@ const createNewMataKuliahSchemaRequest = Joi.object({
 });
 
 const updateMataKuliahSchemaRequest = Joi.object({
+  kode: Joi.string().required(),
   nama: Joi.string().required(),
   sks: Joi.number().required(),
   namaProdi: Joi.string().required(),
