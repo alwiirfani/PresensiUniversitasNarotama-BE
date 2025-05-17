@@ -6,6 +6,7 @@ import authController from "../controllers/auth-controller.js";
 import dosenController from "../controllers/dosen-controller.js";
 import mahasiswaController from "../controllers/mahasiswa-controller.js";
 import mataKuliahController from "../controllers/mata-kuliah-controller.js";
+import jadwalMatkulController from "../controllers/jadwal-matkul-controller.js";
 
 const adminRoute = express.Router();
 
@@ -95,5 +96,20 @@ adminRoute.delete(
 );
 
 // JADWAL MATA KULIAH
+adminRoute.post(
+  "/api/v1/jadwal-matkul",
+  verifyTokenAdmin,
+  jadwalMatkulController.createJadwalMataKuliah
+);
+adminRoute.put(
+  "/api/v1/jadwal-matkul",
+  verifyTokenAdmin,
+  jadwalMatkulController.updateJadwalMataKuliah
+);
+adminRoute.delete(
+  "/api/v1/jadwal-matkul/:id",
+  verifyTokenAdmin,
+  jadwalMatkulController.deleteJadwalMataKuliah
+);
 
 export { adminRoute };

@@ -86,11 +86,10 @@ CREATE TABLE "PresensiMahasiswa" (
     "id" VARCHAR(255) NOT NULL,
     "mahasiswaNim" CHAR(8) NOT NULL,
     "jadwalMataKuliahId" VARCHAR(255) NOT NULL,
-    "tanggal" TIMESTAMP(3) NOT NULL,
-    "scanTime" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "tanggal" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "status" "StatusPresensi" NOT NULL,
-    "qrTokenUsed" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "qrCodeId" TEXT,
     "verifiedByDosenNip" TEXT,
 
     CONSTRAINT "PresensiMahasiswa_pkey" PRIMARY KEY ("id")
@@ -101,8 +100,7 @@ CREATE TABLE "PresensiDosen" (
     "id" VARCHAR(255) NOT NULL,
     "dosenNip" CHAR(5) NOT NULL,
     "jadwalMataKuliahId" VARCHAR(255) NOT NULL,
-    "tanggal" TIMESTAMP(3) NOT NULL,
-    "scanTime" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "tanggal" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "status" "StatusPresensi" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -117,10 +115,7 @@ CREATE TABLE "JadwalMataKuliah" (
     "jamSelesai" VARCHAR(50) NOT NULL,
     "ruangan" VARCHAR(10) NOT NULL,
     "mataKuliahKode" CHAR(5) NOT NULL,
-    "dosenNip" CHAR(7) NOT NULL,
-    "qrCodeToken" VARCHAR(255),
-    "qrCodeExpiredAt" TIMESTAMP(3),
-    "qrCodeUrl" VARCHAR(255),
+    "dosenNip" CHAR(5) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -269,6 +264,9 @@ ALTER TABLE "PresensiMahasiswa" ADD CONSTRAINT "PresensiMahasiswa_mahasiswaNim_f
 
 -- AddForeignKey
 ALTER TABLE "PresensiMahasiswa" ADD CONSTRAINT "PresensiMahasiswa_jadwalMataKuliahId_fkey" FOREIGN KEY ("jadwalMataKuliahId") REFERENCES "JadwalMataKuliah"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PresensiMahasiswa" ADD CONSTRAINT "PresensiMahasiswa_qrCodeId_fkey" FOREIGN KEY ("qrCodeId") REFERENCES "MahasiswaQRCode"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "PresensiMahasiswa" ADD CONSTRAINT "PresensiMahasiswa_verifiedByDosenNip_fkey" FOREIGN KEY ("verifiedByDosenNip") REFERENCES "Dosen"("nip") ON DELETE SET NULL ON UPDATE CASCADE;

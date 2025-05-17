@@ -5,6 +5,7 @@ import prodiController from "../controllers/prodi-controller.js";
 import presensiDosenController from "../controllers/presensi-dosen-controller.js";
 import mahasiswaController from "../controllers/mahasiswa-controller.js";
 import mataKuliahController from "../controllers/mata-kuliah-controller.js";
+import jadwalMatkulController from "../controllers/jadwal-matkul-controller.js";
 
 const publicRoute = express.Router();
 
@@ -42,6 +43,16 @@ publicRoute.get("/api/v1/mata-kuliah", mataKuliahController.findAllMataKuliah);
 publicRoute.get(
   "/api/v1/mata-kuliah/:kode",
   mataKuliahController.findMataKuliahByKode
+);
+
+// JADWAL MATA KULIAH
+publicRoute.get(
+  "/api/v1/jadwal-matkul",
+  jadwalMatkulController.findAllJadwalMataKuliah
+);
+publicRoute.get(
+  "/api/v1/jadwal-matkul/:id",
+  jadwalMatkulController.findJadwalMataKuliahById
 );
 
 // PRESENSI DOSEN

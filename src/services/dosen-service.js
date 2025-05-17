@@ -117,6 +117,26 @@ const findDosenByNip = async (dosenNip) => {
   }
 };
 
+const getDosenByNip = async (dosenNip) => {
+  // TODO cek dosenNip ada dan tipe data string
+  if (!dosenNip || typeof dosenNip !== "string")
+    throw new ResponseError(400, "Dosen NIP is not valid");
+
+  try {
+    // TODO cek apakah dosen sudah ada
+    const dosen = await prisma.dosen.findUnique({
+      where: { nip: dosenNip },
+    });
+
+    // TODO throw error jika dosen tidak ada
+    if (!dosen) throw new ResponseError(404, "Dosen not found");
+
+    return dosen;
+  } catch (error) {
+    throw new ResponseError(error.status, error.message);
+  }
+};
+
 const findAllDosen = async ({ namaProdi, page = 1, pageSize = 10 }) => {
   if (isNaN(page) || isNaN(pageSize) || page < 1 || pageSize < 1)
     throw new ResponseError(400, "Invalid pagination parameters");
@@ -184,6 +204,7 @@ export default {
   updateDosenForAdmin,
   updateDosen,
   findDosenByNip,
+  getDosenByNip,
   findAllDosen,
   deleteDosen,
 };

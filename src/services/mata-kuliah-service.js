@@ -73,9 +73,6 @@ const updateMataKuliah = async (request) => {
     updateMataKuliahRequest.namaProdi
   );
 
-  // TODO throw error jika prodi tidak ada
-  if (!prodiExist) throw new ResponseError(404, "Prodi Not Found");
-
   // TODO update mata kuliah
   const updatedMataKuliah = await prisma.mataKuliah.update({
     where: { kode: updateMataKuliahRequest.kode },
@@ -106,6 +103,25 @@ const findMataKuliahByKode = async (kode) => {
     if (!mataKuliah) throw new ResponseError(404, "Mata Kuliah Not Found");
 
     return findMataKuliahByKodeResponse(mataKuliah);
+  } catch (error) {
+    throw new ResponseError(error.status, error.message);
+  }
+};
+
+const findMataKuliahByNamaMataKuliah = async (namaMataKuliah) => {
+  // TODO validasi nama mata kuliah
+  if (!namaMataKuliah || typeof namaMataKuliah !== "string")
+    throw new ResponseError(400, "Invalid Mata Kuliah Name");
+
+  try {
+    // TODO cek apakah mata kuliah ada
+    const mataKuliah = await prisma.mataKuliah.findFirst({
+      where: { nama: namaMataKuliah },
+    });
+
+    if (!mataKuliah) throw new ResponseError(404, "Mata Kuliah Not Found");
+
+    return mataKuliah;
   } catch (error) {
     throw new ResponseError(error.status, error.message);
   }
@@ -181,6 +197,7 @@ export default {
   createMataKuliah,
   updateMataKuliah,
   findMataKuliahByKode,
+  findMataKuliahByNamaMataKuliah,
   findAllMataKuliah,
   deleteMataKuliah,
 };

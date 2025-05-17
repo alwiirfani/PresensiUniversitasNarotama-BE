@@ -57,7 +57,7 @@ model Prodi {
 
 // Entitas Admin
 model Admin {
-  pin          String   @id @default(uuid()) @db.Char(4)
+  pin          String   @id @db.Char(4)
   username     String   @unique @db.VarChar(255)
   password     String   @db.VarChar(255)
   refreshToken String?
@@ -67,7 +67,7 @@ model Admin {
 
 // Entitas Mahasiswa
 model Mahasiswa {
-  nim                 String                @id @default(uuid()) @db.Char(8)
+  nim                 String                @id @db.Char(8)
   nama                String                @db.VarChar(255)
   email               String                @unique @db.VarChar(50)
   password            String                @db.VarChar(255)
@@ -88,7 +88,7 @@ model Mahasiswa {
 
 // Entitas Dosen
 model Dosen {
-  nip                       String              @id @default(uuid()) @db.Char(5)
+  nip                       String              @id @db.Char(5)
   nama                      String              @db.VarChar(255)
   email                     String              @unique @db.VarChar(255)
   password                  String              @db.VarChar(255)
@@ -165,7 +165,7 @@ model JadwalMataKuliah {
   ruangan           String              @db.VarChar(10)
   mataKuliahKode    String              @db.Char(5)
   mataKuliah        MataKuliah          @relation(fields: [mataKuliahKode], references: [kode])
-  dosenNip          String              @db.Char(7)
+  dosenNip          String              @db.Char(5)
   dosen             Dosen               @relation(fields: [dosenNip], references: [nip])
   mahasiswaJadwal   MahasiswaJadwal[]
   presensiMahasiswa PresensiMahasiswa[]
