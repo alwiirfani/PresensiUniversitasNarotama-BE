@@ -151,7 +151,16 @@ const findAllJadwalMataKuliah = async ({ hari, page = 1, pageSize = 10 }) => {
         skip: (page - 1) * pageSize,
         take: pageSize,
         where,
-        include: { mataKuliah: true, dosen: { select: { nama: true } } },
+        include: {
+          mataKuliah: {
+            select: {
+              kode: true,
+              nama: true,
+              prodi: { select: { id: true, nama: true } },
+            },
+          },
+          dosen: { select: { nip: true, nama: true } },
+        },
         orderBy: { createdAt: "desc" },
       }),
 
