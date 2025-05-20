@@ -1,3 +1,3 @@
-import startServer from "./manager/server/server.js";
+import server from "./manager/server/server.js";
 
-startServer();
+server.startServer();

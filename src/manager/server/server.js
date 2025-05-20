@@ -39,4 +39,4 @@ const startServer = () => {
   });
 };
 
-export default startServer;
+export default { startServer };

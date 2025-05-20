@@ -2,16 +2,17 @@ import {
   createNewMataKuliahSchemaRequest,
   updateMataKuliahSchemaRequest,
 } from "../dto/request/mataKuliah/mata-kuliah-request.js";
-import prisma from "../manager/db/prisma.js";
-import ResponseError from "../errors/response-error.js";
-import { validate } from "../utils/validation-util.js";
-import prodiService from "./prodi-service.js";
 import {
   createNewMataKuliahResponse,
   findMataKuliahByKodeResponse,
   updateMataKuliahResponse,
 } from "../dto/response/mataKuliah/mata-kulaih-response.js";
+import prisma from "../manager/db/prisma.js";
+import ResponseError from "../errors/response-error.js";
+import { validate } from "../utils/validation-util.js";
+import prodiService from "./prodi-service.js";
 import { Prisma } from "@prisma/client";
+import dosenService from "./dosen-service.js";
 
 const createMataKuliah = async (request) => {
   // TODO validasi request
@@ -21,6 +22,11 @@ const createMataKuliah = async (request) => {
   );
 
   try {
+    // TODO cek dosen apakah ada
+    const dosenExist = await dosenService.getDosenByNip(
+      createNewMataKuliahRequest.dosenNip
+    );
+
     // TODO cek prodi apakah ada
     const prodiExist = await prodiService.findProdiByName(
       createNewMataKuliahRequest.namaProdi
@@ -36,15 +42,27 @@ const createMataKuliah = async (request) => {
       throw new ResponseError(400, "Mata Kuliah already exist");
 
     // TODO membuat mata kuliah baru
-    const createMataKuliah = await prisma.mataKuliah.create({
-      data: {
-        kode: createNewMataKuliahRequest.kode,
-        nama: createNewMataKuliahRequest.nama,
-        sks: createNewMataKuliahRequest.sks,
-        prodiId: prodiExist.id,
-        createdAt: new Date(),
-      },
-      include: { prodi: true },
+    const createMataKuliah = await prisma.$transaction(async (tx) => {
+      const mataKuliah = await tx.mataKuliah.create({
+        data: {
+          kode: createNewMataKuliahRequest.kode,
+          nama: createNewMataKuliahRequest.nama,
+          sks: createNewMataKuliahRequest.sks,
+          prodiId: prodiExist.id,
+        },
+        include: { prodi: true },
+      });
+
+      await tx.dosenMataKuliah.create({
+        data: {
+          dosenNip: dosenExist.nip,
+          mataKuliahKode: mataKuliah.kode,
+          semester: createNewMataKuliahRequest.semester,
+          tahunAjaran: createNewMataKuliahRequest.tahunAjaran,
+        },
+      });
+
+      return mataKuliah;
     });
 
     return createNewMataKuliahResponse(createMataKuliah);
@@ -60,29 +78,49 @@ const updateMataKuliah = async (request) => {
     request
   );
 
-  // TODO cek apakah mata kuliah sudah ada
-  const mataKuliahExist = await prisma.mataKuliah.findUnique({
-    where: { kode: updateMataKuliahRequest.kode },
-  });
-
-  // TODO throw error jika mata kuliah tidak ada
-  if (!mataKuliahExist) throw new ResponseError(404, "Mata Kuliah Not Found");
-
   // TODO cek apakah prodi ada
   const prodiExist = await prodiService.findProdiByName(
     updateMataKuliahRequest.namaProdi
   );
 
+  // TODO cek apakah mata kuliah sudah ada
+  const mataKuliahExist = await prisma.mataKuliah.findUnique({
+    where: { kode: updateMataKuliahRequest.kode, prodiId: prodiExist.id },
+    include: { dosenMataKuliah: true },
+  });
+
+  // TODO throw error jika mata kuliah tidak ada
+  if (!mataKuliahExist) throw new ResponseError(404, "Mata Kuliah Not Found");
+
+  const dosenExist = await dosenService.getDosenByNip(
+    updateMataKuliahRequest.dosenNip
+  );
+
   // TODO update mata kuliah
-  const updatedMataKuliah = await prisma.mataKuliah.update({
-    where: { kode: updateMataKuliahRequest.kode },
-    data: {
-      nama: updateMataKuliahRequest.nama,
-      sks: updateMataKuliahRequest.sks,
-      prodiId: prodiExist.id,
-      updatedAt: new Date(),
-    },
-    include: { prodi: true },
+  const updatedMataKuliah = await prisma.$transaction(async (tx) => {
+    // TODO update mata kuliah
+    const mataKuliah = await tx.mataKuliah.update({
+      where: { kode: updateMataKuliahRequest.kode },
+      data: {
+        nama: updateMataKuliahRequest.nama,
+        sks: updateMataKuliahRequest.sks,
+        prodiId: prodiExist.id,
+        updatedAt: new Date(),
+      },
+      include: { prodi: true },
+    });
+
+    // TODO update dosen mata kuliah
+    await tx.dosenMataKuliah.updateMany({
+      where: { mataKuliahKode: mataKuliah.kode },
+      data: {
+        dosenNip: dosenExist.nip,
+        semester: updateMataKuliahRequest.semester,
+        tahunAjaran: updateMataKuliahRequest.tahunAjaran,
+      },
+    });
+
+    return mataKuliah;
   });
 
   return updateMataKuliahResponse(updatedMataKuliah);
@@ -184,8 +222,18 @@ const deleteMataKuliah = async (mataKuliahKode) => {
 
     if (!mataKuliah) throw new ResponseError(404, "Mata Kuliah Not Found");
 
-    // TODO delete mata kuliah
-    await prisma.mataKuliah.delete({ where: { kode: mataKuliahKode } });
+    // TODO transaction delete mata kuliah
+    await prisma.$transaction(async (tx) => {
+      // TODO delete dosen mata kuliah
+      await tx.dosenMataKuliah.deleteMany({
+        where: { mataKuliahKode: mataKuliah.kode },
+      });
+
+      // TODO delete mata kuliah
+      await tx.mataKuliah.delete({
+        where: { kode: mataKuliah.kode },
+      });
+    });
 
     return { nama: mataKuliah.nama };
   } catch (error) {
