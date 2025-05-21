@@ -17,6 +17,16 @@ const findMahasiswaByNimResponse = (findMahasiswa) => {
     namaProdi: findMahasiswa.prodi.nama,
     email: findMahasiswa.email,
     alamat: findMahasiswa.alamat,
+    mataKuliah: findMahasiswa.mahasiswaJadwal.map((item) => {
+      return {
+        nama: item.jadwalMataKuliah.mataKuliah.nama,
+      };
+    }),
+    jadwalMataKuliah: findMahasiswa.mahasiswaJadwal.map((item) => {
+      return {
+        jadwalMataKuliahId: item.jadwalMataKuliahId,
+      };
+    }),
     createdAt: findMahasiswa.createdAt,
     updatedAt: findMahasiswa.updatedAt,
   };

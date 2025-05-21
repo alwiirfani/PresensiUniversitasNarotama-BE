@@ -109,10 +109,11 @@ const findMahasiswaByNim = async (mahasiswaNim) => {
     // TODO cek apakah mahasiswa sudah ada
     const mahasiswa = await prisma.mahasiswa.findUnique({
       where: { nim: mahasiswaNim },
-      select: {
+      include: {
         prodi: { select: { nama: true } },
         mahasiswaJadwal: {
           select: {
+            jadwalMataKuliahId: true,
             jadwalMataKuliah: {
               select: { mataKuliah: { select: { nama: true } } },
             },
@@ -125,6 +126,7 @@ const findMahasiswaByNim = async (mahasiswaNim) => {
     if (!mahasiswa) throw new ResponseError(404, "Mahasiswa not found");
 
     return findMahasiswaByNimResponse(mahasiswa);
+    // return mahasiswa;
   } catch (error) {
     throw new ResponseError(error.status, error.message);
   }
