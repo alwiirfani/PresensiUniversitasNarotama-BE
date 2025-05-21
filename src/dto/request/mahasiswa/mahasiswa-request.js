@@ -17,6 +17,7 @@ const updateMahasiswaSchemaRequest = Joi.object({
   alamat: Joi.string().min(2).required(),
 });
 
+// Mata Kuliah Mahasiswa
 const updateManyMataKuliahMahasiswaSchemaRequest = Joi.object({
   mataKuliah: Joi.array()
     .items(Joi.string().required())
@@ -34,8 +35,22 @@ const updateManyMataKuliahMahasiswaSchemaRequest = Joi.object({
   }),
 });
 
+// Jadwal Mahasiswa
+const updateManyJadwalMahasiswaSchemaRequest = Joi.object({
+  jadwal: Joi.array()
+    .items(Joi.string().required())
+    .min(1)
+    .required()
+    .messages({
+      "array.base": `"jadwal" harus berupa array`,
+      "array.min": `"jadwal" harus memiliki minimal 1 jadwal`,
+      "any.required": `"jadwal" harus diisi`,
+    }),
+});
+
 export {
   updateMahasiswaForAdminSchemaRequest,
   updateMahasiswaSchemaRequest,
   updateManyMataKuliahMahasiswaSchemaRequest,
+  updateManyJadwalMahasiswaSchemaRequest,
 };

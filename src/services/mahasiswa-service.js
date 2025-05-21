@@ -109,7 +109,16 @@ const findMahasiswaByNim = async (mahasiswaNim) => {
     // TODO cek apakah mahasiswa sudah ada
     const mahasiswa = await prisma.mahasiswa.findUnique({
       where: { nim: mahasiswaNim },
-      include: { prodi: true },
+      select: {
+        prodi: { select: { nama: true } },
+        mahasiswaJadwal: {
+          select: {
+            jadwalMataKuliah: {
+              select: { mataKuliah: { select: { nama: true } } },
+            },
+          },
+        },
+      },
     });
 
     // TODO throw error jika mahasiswa tidak ada
@@ -184,10 +193,31 @@ const deleteMahasiswa = async (mahasiswaNim) => {
   }
 };
 
+const getMahasiswaByNim = async (mahasiswaNim) => {
+  // TODO cek mahasiswaNim ada dan tipe data string
+  if (!mahasiswaNim || typeof mahasiswaNim !== "string")
+    throw new ResponseError(400, "Mahasiswa NIM is not valid");
+
+  try {
+    // TODO cek apakah mahasiswa sudah ada
+    const mahasiswa = await prisma.mahasiswa.findUnique({
+      where: { nim: mahasiswaNim },
+    });
+
+    // TODO throw error jika mahasiswa tidak ada
+    if (!mahasiswa) throw new ResponseError(404, "Mahasiswa not found");
+
+    return mahasiswa;
+  } catch (error) {
+    throw new ResponseError(error.status, error.message);
+  }
+};
+
 export default {
   updateMahasiswaForAdmin,
   updateMahasiswa,
   findMahasiswaByNim,
   findAllMahasiswa,
   deleteMahasiswa,
+  getMahasiswaByNim,
 };

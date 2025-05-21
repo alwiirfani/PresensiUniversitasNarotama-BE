@@ -7,6 +7,8 @@ import dosenController from "../controllers/dosen-controller.js";
 import mahasiswaController from "../controllers/mahasiswa-controller.js";
 import mataKuliahController from "../controllers/mata-kuliah-controller.js";
 import jadwalMatkulController from "../controllers/jadwal-matkul-controller.js";
+import mhsMatkulController from "../controllers/mhs-matkul-controller.js";
+import mhsJadwalController from "../controllers/mhs-jadwal-controller.js";
 
 const adminRoute = express.Router();
 
@@ -76,6 +78,18 @@ adminRoute.delete(
   "/api/v1/mahasiswa/:mahasiswaNim",
   verifyTokenAdmin,
   mahasiswaController.deleteMahasiswa
+);
+// MATA KULIAH MAHASISWA
+adminRoute.put(
+  "/api/v1/mahasiswa/:mahasiswaNim/mata-kuliah",
+  verifyTokenAdmin,
+  mhsMatkulController.updateManyMataKuliahMahasiswa
+);
+// JADWAL MAHASISWA
+adminRoute.put(
+  "/api/v1/mahasiswa/:mahasiswaNim/jadwal-matkul",
+  verifyTokenAdmin,
+  mhsJadwalController.updateManyJadwalMahasiswa
 );
 
 // MATA KULIAH

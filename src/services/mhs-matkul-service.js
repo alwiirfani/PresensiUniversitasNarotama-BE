@@ -1,6 +1,7 @@
 import { updateManyMataKuliahMahasiswaSchemaRequest } from "../dto/request/mahasiswa/mahasiswa-request.js";
 import { validate } from "../utils/validation-util.js";
 import prisma from "../manager/db/prisma.js";
+import mahasiswaService from "./mahasiswa-service.js";
 
 const updateManyMataKuliahMahasiswa = async (mahasiswaNim, request) => {
   // TODO validasi request
@@ -9,12 +10,15 @@ const updateManyMataKuliahMahasiswa = async (mahasiswaNim, request) => {
     request
   );
 
+  // TODO cek apakah mahasiswa sudah ada
+  const mahasiswaExist = await mahasiswaService.getMahasiswaByNim(mahasiswaNim);
+
   const listNewMataKuliah = updateManyMataKuliahMahasiswaRequest.mataKuliah;
   const semester = updateManyMataKuliahMahasiswaRequest.semester ?? null;
 
   // TODO cek apakah ada data yang berelasi
   const existMataKuliah = await prisma.mahasiswaMataKuliah.findMany({
-    where: { mahasiswaNim },
+    where: { mahasiswaNim: mahasiswaExist.nim },
     select: { mataKuliahKode: true },
   });
 
@@ -24,7 +28,7 @@ const updateManyMataKuliahMahasiswa = async (mahasiswaNim, request) => {
   const toInsertMataKuliah = listNewMataKuliah
     .filter((kode) => !existingSet.has(kode))
     .map((kode) => ({
-      mahasiswaNim,
+      mahasiswaNim: mahasiswaExist.nim,
       mataKuliahKode: kode,
       semester,
     }));
@@ -42,4 +46,4 @@ const updateManyMataKuliahMahasiswa = async (mahasiswaNim, request) => {
 
 const deleteManyMataKuliahMahasiswa = async (mahasiswaNim, request) => {};
 
-export default updateManyMataKuliahMahasiswa;
+export default { updateManyMataKuliahMahasiswa };
