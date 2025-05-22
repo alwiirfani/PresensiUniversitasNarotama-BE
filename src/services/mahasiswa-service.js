@@ -115,7 +115,14 @@ const findMahasiswaByNim = async (mahasiswaNim) => {
           select: {
             jadwalMataKuliahId: true,
             jadwalMataKuliah: {
-              select: { mataKuliah: { select: { nama: true } } },
+              select: {
+                hari: true,
+                jamMulai: true,
+                jamSelesai: true,
+                ruangan: true,
+                dosen: { select: { nama: true } },
+                mataKuliah: { select: { nama: true } },
+              },
             },
           },
         },

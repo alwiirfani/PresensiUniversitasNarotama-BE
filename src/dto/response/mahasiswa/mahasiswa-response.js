@@ -17,16 +17,18 @@ const findMahasiswaByNimResponse = (findMahasiswa) => {
     namaProdi: findMahasiswa.prodi.nama,
     email: findMahasiswa.email,
     alamat: findMahasiswa.alamat,
-    mataKuliah: findMahasiswa.mahasiswaJadwal.map((item) => {
-      return {
-        nama: item.jadwalMataKuliah.mataKuliah.nama,
-      };
-    }),
-    jadwalMataKuliah: findMahasiswa.mahasiswaJadwal.map((item) => {
+    jadwal: findMahasiswa.mahasiswaJadwal.map((item) => {
       return {
         jadwalMataKuliahId: item.jadwalMataKuliahId,
+        namaMataKuliah: item.jadwalMataKuliah.mataKuliah.nama,
+        hari: item.jadwalMataKuliah.hari,
+        jamMulai: item.jadwalMataKuliah.jamMulai,
+        jamSelesai: item.jadwalMataKuliah.jamSelesai,
+        ruangan: item.jadwalMataKuliah.ruangan,
+        namaDosen: item.jadwalMataKuliah.dosen.nama,
       };
     }),
+
     createdAt: findMahasiswa.createdAt,
     updatedAt: findMahasiswa.updatedAt,
   };
