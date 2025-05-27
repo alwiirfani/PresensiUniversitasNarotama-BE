@@ -10,27 +10,25 @@ const updateMahasiswaResponse = (updateMahasiswa) => {
   };
 };
 
-const findMahasiswaByNimResponse = (findMahasiswa) => {
+const findMahasiswaByNimResponse = (mahasiswa) => {
   return {
-    nim: findMahasiswa.nim,
-    nama: findMahasiswa.nama,
-    namaProdi: findMahasiswa.prodi.nama,
-    email: findMahasiswa.email,
-    alamat: findMahasiswa.alamat,
-    jadwal: findMahasiswa.mahasiswaJadwal.map((item) => {
-      return {
-        jadwalMataKuliahId: item.jadwalMataKuliahId,
-        namaMataKuliah: item.jadwalMataKuliah.mataKuliah.nama,
-        hari: item.jadwalMataKuliah.hari,
-        jamMulai: item.jadwalMataKuliah.jamMulai,
-        jamSelesai: item.jadwalMataKuliah.jamSelesai,
-        ruangan: item.jadwalMataKuliah.ruangan,
-        namaDosen: item.jadwalMataKuliah.dosen.nama,
-      };
-    }),
+    nim: mahasiswa.nim,
+    nama: mahasiswa.nama,
+    namaProdi: mahasiswa.prodi,
+    email: mahasiswa.email,
+    alamat: mahasiswa.alamat,
+    jadwal: mahasiswa.mahasiswaJadwal.map((item) => ({
+      jadwalMataKuliahId: item.jadwalMataKuliahId,
+      namaMataKuliah: item.jadwalMataKuliah.mataKuliah.nama,
+      hari: item.jadwalMataKuliah.hari,
+      jamMulai: item.jadwalMataKuliah.jamMulai,
+      jamSelesai: item.jadwalMataKuliah.jamSelesai,
+      ruangan: item.jadwalMataKuliah.ruangan,
+      namaDosen: item.jadwalMataKuliah.dosen.nama,
+    })),
 
-    createdAt: findMahasiswa.createdAt,
-    updatedAt: findMahasiswa.updatedAt,
+    createdAt: mahasiswa.createdAt,
+    updatedAt: mahasiswa.updatedAt,
   };
 };
 

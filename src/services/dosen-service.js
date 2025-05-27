@@ -105,13 +105,41 @@ const findDosenByNip = async (dosenNip) => {
     // TODO cek apakah dosen sudah ada
     const dosen = await prisma.dosen.findUnique({
       where: { nip: dosenNip },
-      include: { prodi: true },
+      select: {
+        nip: true,
+        nama: true,
+        email: true,
+        alamat: true,
+        createdAt: true,
+        updatedAt: true,
+        prodi: { select: { nama: true } },
+        dosenMatakuliah: {
+          select: {
+            mataKuliah: {
+              select: {
+                kode: true,
+                nama: true,
+                jadwalMataKuliah: {
+                  select: {
+                    id: true,
+                    hari: true,
+                    jamMulai: true,
+                    jamSelesai: true,
+                    ruangan: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
 
     // TODO throw error jika dosen tidak ada
     if (!dosen) throw new ResponseError(404, "Dosen not found");
 
     return findDosenByNipResponse(dosen);
+    // return dosen;
   } catch (error) {
     throw new ResponseError(error.status, error.message);
   }

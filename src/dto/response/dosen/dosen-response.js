@@ -9,16 +9,20 @@ const updateDosenResponse = (updateDosen) => {
     updatedAt: updateDosen.updatedAt,
   };
 };
-const findDosenByNipResponse = (findDosen) => {
-  return {
-    nip: findDosen.nip,
-    nama: findDosen.nama,
-    namaProdi: findDosen.prodi.nama,
-    email: findDosen.email,
-    alamat: findDosen.alamat,
-    createdAt: findDosen.createdAt,
-    updatedAt: findDosen.updatedAt,
-  };
-};
+
+const findDosenByNipResponse = (dosen) => ({
+  nip: dosen.nip,
+  nama: dosen.nama,
+  email: dosen.email,
+  alamat: dosen.alamat,
+  createdAt: dosen.createdAt,
+  updatedAt: dosen.updatedAt,
+  prodi: dosen.prodi,
+  matakuliah: dosen.dosenMatakuliah.map((dm) => ({
+    kode: dm.mataKuliah.kode,
+    nama: dm.mataKuliah.nama,
+    jadwal: dm.mataKuliah.jadwalMataKuliah,
+  })),
+});
 
 export { updateDosenResponse, findDosenByNipResponse };

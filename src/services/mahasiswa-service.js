@@ -109,7 +109,13 @@ const findMahasiswaByNim = async (mahasiswaNim) => {
     // TODO cek apakah mahasiswa sudah ada
     const mahasiswa = await prisma.mahasiswa.findUnique({
       where: { nim: mahasiswaNim },
-      include: {
+      select: {
+        nim: true,
+        nama: true,
+        email: true,
+        alamat: true,
+        createdAt: true,
+        updatedAt: true,
         prodi: { select: { nama: true } },
         mahasiswaJadwal: {
           select: {

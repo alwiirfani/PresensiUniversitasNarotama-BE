@@ -6,6 +6,7 @@ import presensiDosenController from "../controllers/presensi-dosen-controller.js
 import mahasiswaController from "../controllers/mahasiswa-controller.js";
 import mataKuliahController from "../controllers/mata-kuliah-controller.js";
 import jadwalMatkulController from "../controllers/jadwal-matkul-controller.js";
+import dosenController from "../controllers/dosen-controller.js";
 
 const publicRoute = express.Router();
 
@@ -30,7 +31,7 @@ publicRoute.get("/api/v1/prodi/:id", prodiController.findProdiById);
 publicRoute.get("/api/v1/prodi", prodiController.findAllProdi);
 
 // DOSEN
-publicRoute.get("/api/v1/dosen/:dosenNip");
+publicRoute.get("/api/v1/dosen/:dosenNip", dosenController.findDosenByNip);
 
 // MAHASISWA
 publicRoute.get(
