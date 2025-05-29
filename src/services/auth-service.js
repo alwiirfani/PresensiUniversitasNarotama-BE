@@ -207,7 +207,7 @@ const loginDosen = async (request) => {
     if (!dosen)
       throw new ResponseError(
         404,
-        `Dosen with name ${loginDosenRequest.nama} not found`
+        `Dosen with NIP ${loginDosenRequest.id} not found`
       );
 
     // TODO cek password
@@ -348,7 +348,7 @@ const loginMahasiswa = async (request) => {
     if (!mahasiswa)
       throw new ResponseError(
         404,
-        `Mahasiswa with NIM ${loginMahasiswaRequest.nim} not found`
+        `Mahasiswa with NIM ${loginMahasiswaRequest.id} not found`
       );
 
     // TODO verify password
